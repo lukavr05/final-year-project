@@ -15,7 +15,7 @@
 ) = {
   // === DOCUMENT SETUP ===
   set document(title: [#title], author: author)
-  set text(font:"GeistMono NF")
+  set text(font:"Nimbus Sans")
   set par(justify: true)
   show link: underline
 
@@ -46,21 +46,18 @@
   
   
   text(22pt, "Final Year Project Report")
-  v(1mm)
   v(3mm)
   line(length: 100%)
-  text(24pt, weight: "bold", title)
-  v(3mm)
-  
-  text(18pt, group_name) 
+  text(30pt, weight: "bold", title)
+  v(1mm)
   text(18pt, author)
   v(3mm)
   line(length: 100%)
   v(10mm)
   text(14pt, report_type + " submitted in part fulfilment of the degree of ")
-  v(3mm)
+  v(1mm)
   text(16pt, weight: "bold")[#course_name]
-  v(3mm)
+  v(10mm)
   text(18pt, "Supervisor: ", weight: "bold")
   text(18pt, supervisor)
 
@@ -115,15 +112,15 @@
 
 == Abstract
 
-The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps. Moreover, the issue has applications in both malware forensics and plagiarism detection. This project explores predicting authorship by extracting and analysing the features of the compiled code. The objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. 
+The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps #super[@rosenblum2011wrote]. Moreover, the issue has applications in both malware forensics and plagiarism detection. This project explores predicting authorship by extracting and analysing features from compiled code and training machine learning models to interpret these features, assessing whether extracted features correspond to known malicious code or authors. The objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. The ultimate goal of the project is to evaluate whether distinctive patterns and features in compiled binaries can be analysed for reliable authorship attribution via machine learning methods. In doing so, we can determine whether the features of the binary are indicative of malicious code or known malicious authors.
 
 == Timeline
 
 *Weeks 1-2* (_September 29#super[th] - October 10#super[th]_)
 #line(length: 100%, stroke: 0.5pt) 
 - Review recommended literature, particularly pertaining to binary feature abstraction, as this will enforce early prototypes of feature extraction tools
-- Explore supplementary readings using Google scholar to find academic literature on binary feature extraction and control graphs, using the C programming language
-- Set up coding environments (i.e - importing and installing necessary libraries/tools)
+- Explore supplementary readings using Google scholar to find academic literature on binary feature extraction and control graphs #super[@theiling2000extracting], using the C programming language
+- Set up coding environments (_i.e.-_ importing and installing necessary libraries/tools)
 #linebreak()
 *Weeks 3-5* (_October 13#super[th] - October 24#super[th]_)
 #line(length: 100%, stroke: 0.5pt)
@@ -132,6 +129,17 @@ The problem of attributing a piece of code, particularly a binary file, to a kno
 #linebreak()
 *Weeks 6-8* (_October 27#super[th] - November 7#super[th]_)
 #line(length: 100%, stroke: 0.5pt)
-- Locate open source datasets that can be used in learning (such as from the *Google Code Jam* @caliskan2015anonymizing)
-- 
+- Locate open source datasets that can be used in learning (such as from the *Google Code Jam* #super[@caliskan2015anonymizing])
+
+== Risk Assessment & Mitigations
+
+#table(
+  columns: (1fr, 2fr, 1fr,1fr, 1fr, 2fr),
+  inset: 10pt,
+  table.header(
+    [*Risk Category*], [*Risk Description*], [*Likelihood (1-5)*],[*Impact (1-5)*], [*Risk Level*], [*Mitigation Strategies*]
+  ),
+  
+)
+
 #bibliography("references.bib")
