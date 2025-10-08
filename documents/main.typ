@@ -112,7 +112,7 @@
 
 == Abstract
 
-The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps#super[@rosenblum2011wrote]. Moreover, the issue has applications in both malware forensics#super[@ALRABAEE2014S94] and threat detection. This project explores predicting authorship by extracting and analysing features from compiled code and training machine learning models to interpret these features, assessing whether extracted features correspond to known malicious code or authors. The early objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. The ultimate goal of the project is to evaluate whether distinctive patterns and features in compiled binaries can be analysed for reliable authorship attribution via machine learning methods. In doing so, we can determine whether the features of the binary are indicative of malicious code or known malicious authors.
+The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps#super[@rosenblum2011wrote]. Moreover, the issue has applications in both malware forensics#super[@ALRABAEE2014S94] and threat detection, as it allows us to automatically identify and categorise malicious code authors#super[@10.11453292577]. This project explores predicting authorship by extracting and analysing features from compiled code and training machine learning models to interpret these features, assessing whether extracted features correspond to known malicious code or authors. The early objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. The ultimate goal of the project is to evaluate whether distinctive patterns and features in compiled binaries can be analysed for reliable authorship attribution via machine learning methods. In doing so, we can determine whether the features of the binary are indicative of malicious code or known malicious authors.
 
 == Timeline
 
@@ -138,7 +138,7 @@ The problem of attributing a piece of code, particularly a binary file, to a kno
 #line(length: 100%, stroke: 0.5pt)
 - Refine development of binary feature extraction tool
 - Continue binary feature extraction report
-- Familiarise myself with machine learning techniques in python and build a plan for my machine learning algorithm
+- Familiarise myself with machine learning techniques in Python (particularly using the `scikit-learn` library#super[@pedregosa2011scikit]) and build a plan for my machine learning algorithm
 *Deliverables:*
 - A successful binary feature extraction tool
 - A completed binary feature extraction report
