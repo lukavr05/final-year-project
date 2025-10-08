@@ -112,34 +112,77 @@
 
 == Abstract
 
-The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps #super[@rosenblum2011wrote]. Moreover, the issue has applications in both malware forensics and plagiarism detection. This project explores predicting authorship by extracting and analysing features from compiled code and training machine learning models to interpret these features, assessing whether extracted features correspond to known malicious code or authors. The objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. The ultimate goal of the project is to evaluate whether distinctive patterns and features in compiled binaries can be analysed for reliable authorship attribution via machine learning methods. In doing so, we can determine whether the features of the binary are indicative of malicious code or known malicious authors.
+The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps#super[@rosenblum2011wrote]. Moreover, the issue has applications in both malware forensics#super[@ALRABAEE2014S94] and threat detection. This project explores predicting authorship by extracting and analysing features from compiled code and training machine learning models to interpret these features, assessing whether extracted features correspond to known malicious code or authors. The early objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. The ultimate goal of the project is to evaluate whether distinctive patterns and features in compiled binaries can be analysed for reliable authorship attribution via machine learning methods. In doing so, we can determine whether the features of the binary are indicative of malicious code or known malicious authors.
 
 == Timeline
 
 *Weeks 1-2* (_September 29#super[th] - October 10#super[th]_)
 #line(length: 100%, stroke: 0.5pt) 
 - Review recommended literature, particularly pertaining to binary feature abstraction, as this will enforce early prototypes of feature extraction tools
-- Explore supplementary readings using Google scholar to find academic literature on binary feature extraction and control graphs #super[@theiling2000extracting], using the C programming language
-- Set up coding environments (_i.e.-_ importing and installing necessary libraries/tools)
+- Explore supplementary readings using Google scholar to find academic literature on binary feature extraction and control graphs#super[@theiling2000extracting]
+*Deliverables:*
+- Preliminary Project Plan
+- Initial coding repository ready for coding experiments
 #linebreak()
 *Weeks 3-5* (_October 13#super[th] - October 24#super[th]_)
 #line(length: 100%, stroke: 0.5pt)
-- Apply theory from readings to create minimal extraction tools
+- Begin drafting report on binary feature extraction
+- Set up coding environments (_i.e.-_ importing and installing necessary libraries/tools) based on research
 - Begin prototyping different methods of binary feature extraction
+  - Implement small test scripts on individual compiled binaries
+*Deliverables:*
+- Minimal scripts/algorithms for extracting features from binary files
+- Rough draft of binary feature extraction report
 #linebreak()
 *Weeks 6-8* (_October 27#super[th] - November 7#super[th]_)
 #line(length: 100%, stroke: 0.5pt)
-- Locate open source datasets that can be used in learning (such as from the *Google Code Jam* #super[@caliskan2015anonymizing])
+- Refine development of binary feature extraction tool
+- Continue binary feature extraction report
+- Familiarise myself with machine learning techniques in python and build a plan for my machine learning algorithm
+*Deliverables:*
+- A successful binary feature extraction tool
+- A completed binary feature extraction report
+- A plan for the machine learning aspect of the project
+#linebreak()
+*Weeks 9-11* (_November 10#super[th] - November 21#super[st]_)
+#line(length: 100%, stroke: 0.5pt)
+- Locate open source datasets that can be used in training (such as from the Google Code Jam#super[@caliskan2015anonymizing])
+- Begin producing prototype machine learning algorithms, built to specifically analyse the features extracted by my completed extraction tool
+- Assess results of preliminary machine learning experiments, in order to refine the algorithm
+- Document key insights to include in my interim report and gauge what additional work needs to be done
+*Deliverables:*
+- Preliminary machine learning algorithms/experiments
+- Evaluation of model performance and challenges
+#linebreak()
+*Weeks 12-14:* (_November 24#super[th] - December 5#super[th]_)
+#line(length: 100%, stroke: 0.5pt)
+- Refine model further using evaluation from previous week
+- Begin training and using external datasets to determine efficacy on untrained datasets
+- Develop interim report further, including binary feature extraction and evaluations from previous weeks 
+*Deliverables:*
+- A more refined machine learning algorithm that can measurably produce more accurate results
+- An updated interim report that reflects this development
+#linebreak()
+*Week 15* (_final week_)
+#line(length: 100%, stroke: 0.5pt)
+- Conduct any further necessary code revisions, whether it be for the binary extraction tool or the machine learning algorithm
+- Finalise interim report
 
 == Risk Assessment & Mitigations
 
 #table(
-  columns: (1fr, 2fr, 1fr,1fr, 1fr, 2fr),
+  columns: (15%, 25%, 10%,10%, 10%, 30%),
   inset: 10pt,
   table.header(
-    [*Risk Category*], [*Risk Description*], [*Likelihood (1-5)*],[*Impact (1-5)*], [*Risk Level*], [*Mitigation Strategies*]
+    [*Risk Category*], [*Risk Description*], [*Likelihood (1-5)*],[*Impact (1-5)*], [*Risk- Level (1-25)*], [*Mitigation Strategies*]
   ),
-  
+  [*Technology*], [Hardware failure/Data loss], [2], [4], [8], [Use Version Control Systems, such as Gitlab, to ensure any files are backed up externally, as well as committing regularly. Constantly save work after editing locally.],
+  [],[Computational resource limitations], [3], [3], [9], [Design code with efficiency in mind, making sure to not unnecessarily drain resources. Use my main PC with better hardware rather than laptop when performing large tasks.],
+  [*Security*], [Including malicious binaries in datasets], [2], [5], [10], [Include only non-malicious binaries in dataset initially as proof of concept, then move to malicious binaries with very *limited* access to any external programs. Consult with supervisor on how to handle these malicious binaries.],
+  [*Technical*], [Scarcity of viable Datasets], [4], [4], [16], [There are not many varied datasets that are easy to acquire, so I will have to manually search for some external binary files with their authors and build on top of minimal datasets.],
+  [*Personal*], [Machine Learning and Binary Feature Extraction Overhead], [5], [3], [15], [Due to my limited experience with Machine Learning _and_ Binary Feature Extraction, I will have to allocate time to learn these technologies in themselves, as well as best practices/optimisations that can be done.],
+  [], [Poor planning/task estimation], [3], [5], [15], [Due to my inexperience, I will need to carefully consider how I break down the project into sections. I will consistently meet with my supervisor in order to evaluate my task estimation.],
+  [],[Imbalance between coding and report-writing],[3],[3],[9],[Continually update my report alongside coding, so that there is not a deficit between the two components.]  
 )
-
+#pagebreak()
 #bibliography("references.bib")
