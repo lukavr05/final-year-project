@@ -1,5 +1,13 @@
 # My Project Diary
 
+## Entry 5 - 09/10/2025
+
+Reviewed draft of project plan in context of required deliverables. Added paragraph outlining Term 1 plans, including reports I plan to write.
+
+## Entry 4 - 08/10/2025
+
+Completed abstract, timeline, and risk assessment and mitigations, as well as meeting with supervisor to discuss current draft of report.
+
 ## Entry 3 - 06/10/2025
 
 Searched for supplementary sources on binary feature extraction. Set up Typst project where all report-writing will happen. Started developing Term 1 timeline.
