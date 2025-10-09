@@ -116,6 +116,16 @@ The problem of attributing a piece of code, particularly a binary file, to a kno
 
 == Timeline
 
+In essence, the project will initially focus on the binary analysis and feature extraction aspect. I intend to research and produce prototypes of tool(s) that will be able to extract meaningful data from binary files that can be used by a machine learning algorithm. Following this, I will produce a *Binary Analysis and Feature Extraction Report*, documenting both my research and implementation process, as well as the key concepts and techniques applied.
+#linebreak()
+#linebreak()
+For the machine learning aspect, I will first consolidate all applicable learning from my Machine Learning module (CS3920), alongside external research, and draft a plan regarding the application of this learning to the project. Subsequently, I will perform preliminary machine learning experiments, assessing and evaluating the results and documenting these in a *Machine Learning Report*.
+#linebreak()
+#linebreak()
+Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports will be included in my interim report.
+#v(1fr)
+#align(end, "See next page for the in-depth first term timeline.")
+#pagebreak()
 *Weeks 1-2* (_September 29#super[th] - October 10#super[th]_)
 #line(length: 100%, stroke: 0.5pt) 
 - Review recommended literature, particularly pertaining to binary feature abstraction, as this will enforce early prototypes of feature extraction tools
@@ -150,6 +160,7 @@ The problem of attributing a piece of code, particularly a binary file, to a kno
 - Begin producing prototype machine learning algorithms, built to specifically analyse the features extracted by my completed extraction tool
 - Assess results of preliminary machine learning experiments, in order to refine the algorithm
 - Document key insights to include in my interim report and gauge what additional work needs to be done
+#pagebreak()
 *Deliverables:*
 - Preliminary machine learning algorithms/experiments
 - Evaluation of model performance and challenges
@@ -167,7 +178,7 @@ The problem of attributing a piece of code, particularly a binary file, to a kno
 #line(length: 100%, stroke: 0.5pt)
 - Conduct any further necessary code revisions, whether it be for the binary extraction tool or the machine learning algorithm
 - Finalise interim report
-
+#pagebreak()
 == Risk Assessment & Mitigations
 
 #table(
