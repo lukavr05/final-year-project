@@ -116,7 +116,7 @@ The problem of attributing a piece of code, particularly a binary file, to a kno
 
 == Timeline
 
-In essence, the project will initially focus on the binary analysis and feature extraction aspect. I intend to research and produce prototypes of tool(s) that will be able to extract meaningful data from binary files that can be used by a machine learning algorithm. Following this, I will produce a *Binary Analysis and Feature Extraction Report*, documenting both my research and implementation process, as well as the key concepts and techniques applied.
+Before I begin coding, I plan to research the theory behind author attribution in the context of programming. This research will be collated into a brief report on *Author Attribution*, to define the different techniques on identifying a code author given their code, that will be included in the main project report. In essence, the practical side of the project will initially focus on the binary analysis and feature extraction aspect. I intend to research and produce prototypes of tool(s) that will be able to extract meaningful data from binary files that can be used by a machine learning algorithm. Following this, I will produce a *Binary Analysis and Feature Extraction Report*, documenting both my research and implementation process, as well as the key concepts and techniques applied.
 #linebreak()
 #linebreak()
 For the machine learning aspect, I will first consolidate all applicable learning from my Machine Learning module (CS3920), alongside external research, and draft a plan regarding the application of this learning to the project. Subsequently, I will perform preliminary machine learning experiments, assessing and evaluating the results and documenting these in a *Machine Learning Report*.
@@ -136,11 +136,13 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
 #linebreak()
 *Weeks 3-5* (_October 13#super[th] - October 24#super[th]_)
 #line(length: 100%, stroke: 0.5pt)
+- Complete research into author attribution in order to write the report
 - Begin drafting report on binary feature extraction
 - Set up coding environments (_i.e.-_ importing and installing necessary libraries/tools) based on research
 - Begin prototyping different methods of binary feature extraction
   - Implement small test scripts on individual compiled binaries
 *Deliverables:*
+- Almost complete author attribution report
 - Minimal scripts/algorithms for extracting features from binary files
 - Rough draft of binary feature extraction report
 #linebreak()
