@@ -1,5 +1,9 @@
 # My Project Diary
 
+## Entry 5 = 10/10/2025
+
+Completed preliminary project plan and submitted for review.
+
 ## Entry 5 - 09/10/2025
 
 Reviewed draft of project plan in context of required deliverables. Added paragraph outlining Term 1 plans, including reports I plan to write.
