@@ -1,5 +1,9 @@
 # My Project Diary
 
+## Entry 6 - 15/10/2025
+
+Began report on author attribution, conducted additional research into the topic.
+
 ## Entry 5 = 10/10/2025
 
 Completed preliminary project plan and submitted for review.
