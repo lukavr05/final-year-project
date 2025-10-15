@@ -198,4 +198,27 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
   [],[Imbalance between coding and report-writing],[3],[3],[9],[Continually update my report alongside coding, so that there is not a deficit between the two components.]  
 )
 #pagebreak()
+
+= Author Attribution
+
+== Introduction
+
+In this section, I intend to explore theories pertaining to the attribution of a piece of code to a known author. While not all these methods are easily measurable in the context of machine learning, the underpinning concepts will heavily influence my approach to author attribution. In essence, the process involves 
+
+== Objectives
+
+== Code Analysis Metrics
+
+== Applicable Metrics in the Context of Machine Learning
+
+== Conclusion
+
+
+#pagebreak()
+
+= Binary Feature Extraction
+#pagebreak()
+
+= Machine Learning
+#pagebreak() 
 #bibliography("references.bib")
