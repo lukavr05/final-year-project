@@ -220,17 +220,18 @@ Following these objectives, we can determine which ones are most relevant to thi
 
 Now that the goals and motivations have been established, we focus now on the precise metrics through which we can measure coding style. Before considering machine learning, however, it is important to understand which measurable elements of code can make an author identifiable. These can broadly be categorised into lexical, syntactic, semantic, and structural metrics @10.11453292577 @10.1007978-3-642-23822-2_10.
 
-#list([*Lexical Metrics* — These describe surface-level textual properties such as: variable naming conventions, identifier lengths, use of white-space, comment density, or preferred keywords. While they can be easily observed in source code, some lexical tendencies may persist in compiled binaries through string literals, function names, or section labels (see Chapter 3).],
+#list([*Lexical Metrics* — These describe surface-level textual properties such as: variable naming conventions, identifier lengths, use of white-space, comment density, or preferred keywords.],
 
-[*Syntactic Metrics* — These measure the arrangement of language constructs. For example, frequency of control structures such as loops (`for`, `while`) or conditionals (`if`, `else`), average nesting depth, or use of specific programming conventions. At the binary level, syntactic style can manifest as characteristic patterns in control-flow graphs (CFGs) @10.1145390013.808479.],
+[*Syntactic Metrics* — These measure the arrangement of language constructs. For example, the frequency of control structures such as loops (`for`, `while`) or conditionals (`if`, `else`), average nesting depth, or use of specific programming conventions.],
 
 [*Semantic Metrics* — These capture the author’s problem-solving habits @Stein06012009: API usage, data-flow choices and preferred algorithms.],
 
 [*Structural and Behavioural Metrics* — These focus on how a program behaves and its higher-level organisation. ],
 indent: 0.6cm, spacing: 0.4cm,
 )
+#linebreak()
 
-Collectively, these metrics form the conceptual foundation for feature extraction. They embody the "fingerprints" that machine learning models aim to quantify given a set of data.
+Collectively, these metrics form the conceptual foundation for feature extraction. They embody the "fingerprints" that machine learning models aim to quantify given a set of data. The method for extracting these features and how they manifest in compiled binaries will be discussed further in *Chapter 3*.
 
 == Applicable Metrics in the Context of Machine Learning
 

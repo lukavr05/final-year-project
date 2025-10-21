@@ -1,8 +1,12 @@
 # My Project Diary
 
+## Entry 7 - 21/10/2025
+
+Conducted additional research into code author analysis metrics. Polished off attribution objectives section with a conclusion. Mostly finished analysis metrics section.
+
 ## Entry 6 - 15/10/2025
 
-Began report on author attribution, conducted additional research into the topic.
+Began report on author attribution, conducted additional research into objectives of author attribution.
 
 ## Entry 5 = 10/10/2025
 
