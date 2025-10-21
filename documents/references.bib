@@ -15,13 +15,20 @@
   organization={IEEE}
 }
 
-@inproceedings{rosenblum2011wrote,
-  title={Who wrote this code? identifying the authors of program binaries},
-  author={Rosenblum, Nathan and Zhu, Xiaojin and Miller, Barton P},
-  booktitle={European Symposium on Research in Computer Security},
-  pages={172--189},
-  year={2011},
-  organization={Springer}
+@inproceedings{10.1007978-3-642-23822-2_10,
+author="Rosenblum, Nathan
+and Zhu, Xiaojin
+and Miller, Barton P.",
+editor="Atluri, Vijay
+and Diaz, Claudia",
+title="Who Wrote This Code? Identifying the Authors of Program Binaries",
+booktitle="Computer Security -- ESORICS 2011",
+year="2011",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="172--189",
+abstract="Program authorship attribution---identifying a programmer based on stylistic characteristics of code---has practical implications for detecting software theft, digital forensics, and malware analysis. Authorship attribution is challenging in these domains where usually only binary code is available; existing source code-based approaches to attribution have left unclear whether and to what extent programmer style survives the compilation process. Casting authorship attribution as a machine learning problem, we present a novel program representation and techniques that automatically detect the stylistic features of binary code. We apply these techniques to two attribution problems: identifying the precise author of a program, and finding stylistic similarities between programs by unknown authors. Our experiments provide strong evidence that programmer style is preserved in program binaries.",
+isbn="978-3-642-23822-2"
 }
 
 @inproceedings{cavnar1994n,
@@ -94,4 +101,57 @@ keywords = {Authorship analysis, malware attribution, programming style, softwar
   pages={2825--2830},
   year={2011},
   publisher={JMLR. org}
+}
+
+@article{10.1145390013.808479,
+author = {Allen, Frances E.},
+title = {Control flow analysis},
+year = {1970},
+issue_date = {July 1970},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {5},
+number = {7},
+issn = {0362-1340},
+url = {https://doi.org/10.1145/390013.808479},
+doi = {10.1145/390013.808479},
+abstract = {Any static, global analysis of the expression and data relationships in a program requires a knowledge of the control flow of the program. Since one of the primary reasons for doing such a global analysis in a compiler is to produce optimized programs, control flow analysis has been embedded in many compilers and has been described in several papers. An early paper by Prosser [5] described the use of Boolean matrices (or, more particularly, connectivity matrices) in flow analysis. The use of “dominance” relationships in flow analysis was first introduced by Prosser and much expanded by Lowry and Medlock [6]. References [6,8,9] describe compilers which use various forms of control flow analysis for optimization. Some recent developments in the area are reported in [4] and in [7].The underlying motivation in all the different types of control flow analysis is the need to codify the flow relationships in the program. The codification may be in connectivity matrices, in predecessor-successor tables, in dominance lists, etc. Whatever the form, the purpose is to facilitate determining what the flow relationships are; in other words to facilitate answering such questions as: is this an inner loop?, if an expression is removed from the loop where can it be correctly and profitably placed?, which variable definitions can affect this use?In this paper the basic control flow relationships are expressed in a directed graph. Various graph constructs are then found and shown to codify interesting global relationships.},
+journal = {SIGPLAN Not.},
+month = jul,
+pages = {1–19},
+numpages = {19}
+}
+
+@inproceedings{10.1145800028.808479,
+author = {Allen, Frances E.},
+title = {Control flow analysis},
+year = {1970},
+isbn = {9781450373869},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/800028.808479},
+doi = {10.1145/800028.808479},
+abstract = {Any static, global analysis of the expression and data relationships in a program requires a knowledge of the control flow of the program. Since one of the primary reasons for doing such a global analysis in a compiler is to produce optimized programs, control flow analysis has been embedded in many compilers and has been described in several papers. An early paper by Prosser [5] described the use of Boolean matrices (or, more particularly, connectivity matrices) in flow analysis. The use of “dominance” relationships in flow analysis was first introduced by Prosser and much expanded by Lowry and Medlock [6]. References [6,8,9] describe compilers which use various forms of control flow analysis for optimization. Some recent developments in the area are reported in [4] and in [7].The underlying motivation in all the different types of control flow analysis is the need to codify the flow relationships in the program. The codification may be in connectivity matrices, in predecessor-successor tables, in dominance lists, etc. Whatever the form, the purpose is to facilitate determining what the flow relationships are; in other words to facilitate answering such questions as: is this an inner loop?, if an expression is removed from the loop where can it be correctly and profitably placed?, which variable definitions can affect this use?In this paper the basic control flow relationships are expressed in a directed graph. Various graph constructs are then found and shown to codify interesting global relationships.},
+booktitle = {Proceedings of a Symposium on Compiler Optimization},
+pages = {1–19},
+numpages = {19},
+location = {Urbana-Champaign, Illinois}
+}
+
+@article{Stein06012009,
+author = {Cara Stein and Letha Etzkorn and Sampson Gholston and Phillip Farrington and Dawn Utley and Glenn Cox and Julie Fortune},
+title = {Semantic metrics: Mettrics based on semantic aspects of software},
+journal = {Applied Artificial Intelligence},
+volume = {23},
+number = {1},
+pages = {44--77},
+year = {2009},
+publisher = {Taylor \& Francis},
+doi = {10.1080/08839510802573574},
+URL = {    
+        https://doi.org/10.1080/08839510802573574
+},
+eprint = { 
+        https://doi.org/10.1080/08839510802573574
+}
 }
