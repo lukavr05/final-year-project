@@ -203,11 +203,20 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
 
 == Introduction
 
-In this section, I intend to explore theories pertaining to the attribution of a piece of code to a known author. While not all these methods are easily measurable in the context of machine learning, the underpinning concepts will heavily influence my approach to author attribution. In essence, the process involves 
+In this section, I will explore the theories and practices pertaining to the attribution of a piece of code to a known author. While not all these methods are easily measurable in the context of machine learning, the underpinning concepts will heavily influence my approach to author attribution. Abstractly, the process involves identifying an author's "fingerprint", and using syntactic identifiers in their writing style in order to determine whether a piece of code fits their respective fingerprint. In the context of computer security, accurately and reliably identifying adversaries is a very desirable goal#super[@10.11453292577]. This capability not only supports forensic investigations and accountability but may also serve as a deterrent to future attacks by reducing the perceived anonymity of adversaries. In this report, I will delve into some objectives that author attribution aims to achieve, some metrics that can be used for identifying authors, then putting these metrics in context and evaluating their relevance to this project's goals and technical implementation.
 
-== Objectives
+== Objectives of Author Attribution
 
-== Code Analysis Metrics
+The following objectives are derived from V. Kalgutar et al.'s article "Code Authorship Attribution: Methods and Challenges"#super[@10.11453292577], and I believe they concisely represent the core goals of authorship attribution. Their descriptions have been paraphrased for clarity.
+
+#list([_*Authorship Identification*_ - find the most likely author of a specific work from a set of given candidate authors.],[_*Authorship Clustering*_ - grouping works based on stylistic similarities to identify groups in which an author has collaborated.],
+[_*Authorship Evolution*_ - analysing changes in an author's code style; the way their programming skills, preferences, and writing style evolve over a period of time.],
+[_*Authorship Verification*_ - determining the author of a given piece of code, to ensure that innocent code has not been tampered with by malicious authors.], indent: 0.6cm, spacing: 0.4cm, marker: [--])
+
+
+== Code Author Analysis Metrics
+
+Now that the goals and motivations have been established, we focus now on how exactly we can measure coding style. 
 
 == Applicable Metrics in the Context of Machine Learning
 
