@@ -209,24 +209,24 @@ In this section, I will explore the theories and practices pertaining to the att
 
 The following objectives are derived from V. Kalgutar et al.'s article "Code Authorship Attribution: Methods and Challenges" @10.11453292577, and I believe they concisely represent the core goals of authorship attribution. Their descriptions have been paraphrased for clarity.
 
-#list([_*Authorship Identification*_ - Finding the most likely author of a specific work from a set of given candidate authors.],[_*Authorship Clustering*_ - Grouping works based on stylistic similarities to identify groups in which an author has collaborated.],
-[_*Authorship Evolution*_ - Analysing changes in an author's code style; the way their programming skills, preferences, and writing style evolve over a period of time.],
-[_*Authorship Verification*_ - Determining the author of a given piece of code, to ensure that innocent code has not been tampered with by malicious authors.], indent: 0.6cm, spacing: 0.4cm, marker: [--])
+#list([_*Authorship Identification*_ -- Finding the most likely author of a specific work from a set of given candidate authors.],[_*Authorship Clustering*_ -- Grouping works based on stylistic similarities to identify groups in which an author has collaborated.],
+[_*Authorship Evolution*_ -- Analysing changes in an author's code style; the way their programming skills, preferences, and writing style evolve over a period of time.],
+[_*Authorship Verification*_ -- Determining the author of a given piece of code, to ensure that innocent code has not been tampered with by malicious authors.], indent: 0.6cm, spacing: 0.4cm, marker: [--])
 #linebreak()
-Following these objectives, we can determine which ones are most relevant to this project. The two main goals I intend to satisfy within this project will be author identification and authorship clustering. Not only do these perfectly encapsulate the goals of the project, they are also the most feasible in the application of machine learning. Authorship verification does not hold as much relevance to the project and will be difficult to measure using machine learning techniques. 
+Following these objectives, we can determine which ones are most relevant to this project. The two main goals I intend to satisfy within this project will be author identification and authorship clustering. Not only do these perfectly encapsulate the goals of the project, they are also the most feasible in the application of machine learning. Authorship verification does not hold as much relevance to the project, and authorship evolution will be difficult to measure using machine learning techniques due to its dynamic nature. 
 #pagebreak()
 
 == Code Author Analysis Metrics
 
 Now that the goals and motivations have been established, we focus now on the precise metrics through which we can measure coding style. Before considering machine learning, however, it is important to understand which measurable elements of code can make an author identifiable. These can broadly be categorised into lexical, syntactic, semantic, and structural metrics @10.11453292577 @10.1007978-3-642-23822-2_10.
 
-#list([*Lexical Metrics* — These describe surface-level textual properties such as: variable naming conventions, identifier lengths, use of white-space, comment density, or preferred keywords.],
+#list([*Lexical Metrics* -- These describe surface-level textual properties such as: variable naming conventions, identifier lengths, use of white-space, comment density, or preferred keywords.],
 
-[*Syntactic Metrics* — These measure the arrangement of language constructs. For example, the frequency of control structures such as loops (`for`, `while`) or conditionals (`if`, `else`), average nesting depth, or use of specific programming conventions.],
+[*Syntactic Metrics* -- These measure the arrangement of language constructs. For example, the frequency of control structures such as loops (`for`, `while`) or conditionals (`if`, `else`), average nesting depth, or use of specific programming conventions.],
 
-[*Semantic Metrics* — These capture the author’s problem-solving habits @Stein06012009: API usage, data-flow choices and preferred algorithms.],
+[*Semantic Metrics* -- These capture the author’s problem-solving habits @Stein06012009: API usage, data-flow choices and preferred algorithms.],
 
-[*Structural and Behavioural Metrics* — These focus on how a program behaves and its higher-level organisation. ],
+[*Structural and Behavioural Metrics* -- These focus on how a program behaves and its higher-level organisation.],
 indent: 0.6cm, spacing: 0.4cm,
 )
 #linebreak()
@@ -235,7 +235,7 @@ Collectively, these metrics form the conceptual foundation for feature extractio
 
 == Applicable Metrics in the Context of Machine Learning
 
-When considering which metrics to focus on in the context of machine learning, we must examine how to extract meaniningful mathematical representations of these metrics.
+When considering which metrics to focus on in the context of machine learning, we must examine how to extract meaniningful mathematical representations of these features.
 
 == Conclusion
 
