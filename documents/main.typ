@@ -221,7 +221,6 @@ Following these objectives, we can determine which ones are most relevant to thi
 Now that the goals and motivations have been established, we focus now on the precise metrics through which we can measure coding style. Before considering machine learning, however, it is important to understand which measurable elements of code can make an author identifiable. These can broadly be categorised into lexical, syntactic, semantic, and structural metrics @rosenblum2011 @kalgutkar2019.
 
 #list([*Lexical Metrics* -- These describe surface-level textual properties such as: variable naming conventions, identifier lengths, use of white-space, comment density, or preferred keywords.],
-#list([*Lexical Metrics* -- These describe surface-level textual properties such as: variable naming conventions, identifier lengths, use of white-space, comment density, or preferred keywords.],
 
 [*Syntactic Metrics* -- These measure the arrangement of language constructs. For example, the frequency of control structures such as loops (e.g., `for`, `while`) or conditionals (e.g., `if`, `else`), average nesting depth, or use of specific programming conventions.],
 
