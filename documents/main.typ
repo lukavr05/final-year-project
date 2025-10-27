@@ -112,7 +112,7 @@
 
 == Abstract
 
-The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps#super[@rosenblum2011wrote]. Moreover, the issue has applications in both malware forensics#super[@ALRABAEE2014S94] and threat detection, as it allows us to automatically identify and categorise malicious code authors#super[@10.11453292577]. This project explores predicting authorship by extracting and analysing features from compiled code and training machine learning models to interpret these features, assessing whether extracted features correspond to known malicious code or authors. The early objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. The ultimate goal of the project is to evaluate whether distinctive patterns and features in compiled binaries can be analysed for reliable authorship attribution via machine learning methods. In doing so, we can determine whether the features of the binary are indicative of malicious code or known malicious authors.
+The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps @rosenblum2011. Moreover, the issue has applications in both malware forensics @alrabee2014 and threat detection, as it allows us to automatically identify and categorise malicious code authors @kalgutkar2019. This project explores predicting authorship by extracting and analysing features from compiled code and training machine learning models to interpret these features, assessing whether extracted features correspond to known malicious code or authors. The early objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. The ultimate goal of the project is to evaluate whether distinctive patterns and features in compiled binaries can be analysed for reliable authorship attribution via machine learning methods. In doing so, we can determine whether the features of the binary are indicative of malicious code or known malicious authors.
 
 == Timeline
 
@@ -129,7 +129,7 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
 *Weeks 1-2* (_September 29#super[th] - October 10#super[th]_)
 #line(length: 100%, stroke: 0.5pt) 
 - Review recommended literature, particularly pertaining to binary feature abstraction, as this will enforce early prototypes of feature extraction tools
-- Explore supplementary readings using Google scholar to find academic literature on binary feature extraction and control graphs#super[@theiling2000extracting]
+- Explore supplementary readings using Google scholar to find academic literature on binary feature extraction and control graphs @theiling2000
 *Deliverables:*
 - Preliminary Project Plan
 - Initial coding repository ready for coding experiments
@@ -150,7 +150,7 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
 #line(length: 100%, stroke: 0.5pt)
 - Refine development of binary feature extraction tool
 - Continue binary feature extraction report
-- Familiarise myself with machine learning techniques in Python (particularly using the `scikit-learn` library#super[@pedregosa2011scikit]) and build a plan for my machine learning algorithm
+- Familiarise myself with machine learning techniques in Python (particularly using the `scikit-learn` library @pedregosa2011) and build a plan for my machine learning algorithm
 *Deliverables:*
 - A successful binary feature extraction tool
 - A completed binary feature extraction report
@@ -158,7 +158,7 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
 #linebreak()
 *Weeks 9-11* (_November 10#super[th] - November 21#super[st]_)
 #line(length: 100%, stroke: 0.5pt)
-- Locate open source datasets that can be used in training (such as from the Google Code Jam#super[@caliskan2015anonymizing])
+- Locate open source datasets that can be used in training (such as from the Google Code Jam @caliskan2015)
 - Begin producing prototype machine learning algorithms, built to specifically analyse the features extracted by my completed extraction tool
 - Assess results of preliminary machine learning experiments, in order to refine the algorithm
 - Document key insights to include in my interim report and gauge what additional work needs to be done
@@ -198,4 +198,90 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
   [],[Imbalance between coding and report-writing],[3],[3],[9],[Continually update my report alongside coding, so that there is not a deficit between the two components.]  
 )
 #pagebreak()
+
+= Author Attribution
+
+== Introduction
+
+In this section, we will explore the theories and practices pertaining to the attribution of a piece of code to a known author. While not all these methods are easily measurable in the context of machine learning, the underpinning concepts will heavily influence the approach to author attribution. Abstractly, the process involves identifying an author's "fingerprint", and using syntactic identifiers within their writing style in order to determine whether a piece of code fits their respective fingerprint. In the context of computer security, accurately and reliably identifying adversaries is a very desirable goal @stein2009. This capability not only supports forensic investigations and accountability but may also serve as a deterrent to future attacks by reducing the perceived anonymity of adversaries. In this report, we will delve into some objectives that author attribution aims to achieve, some metrics that can be used for identifying authors, then putting these metrics in context and evaluating their relevance to this project's goals and technical implementation.
+
+== Objectives of Author Attribution
+
+The following objectives are derived from V. Kalgutkar et al.'s article "Code Authorship Attribution: Methods and Challenges" @kalgutkar2019, and I believe they concisely represent the core goals of authorship attribution. Their descriptions have been paraphrased for clarity.
+
+#list([_*Authorship Identification*_ -- Finding the most likely author of a specific work from a set of given candidate authors.],[_*Authorship Clustering*_ -- Grouping works based on stylistic similarities to identify groups in which an author has collaborated.],
+[_*Authorship Evolution*_ -- Analysing changes in an author's code style; the way their programming skills, preferences, and writing style evolve over a period of time.],
+[_*Authorship Verification*_ -- Determining the author of a given piece of code, to ensure that innocent code has not been tampered with by malicious authors.], indent: 0.6cm, spacing: 0.4cm, marker: [--])
+#linebreak()
+Following these objectives, we can determine which ones are most relevant to this project. The two main goals I intend to satisfy within this project will be author identification and authorship clustering. Not only do these perfectly encapsulate the goals of the project, they are also the most feasible in the application of machine learning. Authorship verification does not hold as much relevance to the project, and authorship evolution will be difficult to measure using machine learning techniques due to its dynamic nature. 
+#pagebreak()
+
+== Code Author Analysis Metrics
+
+Now that the goals and motivations have been established, we focus now on the precise metrics through which we can measure coding style. Before considering machine learning, however, it is important to understand which measurable elements of code can make an author identifiable. These can broadly be categorised into lexical, syntactic, semantic, and structural metrics @rosenblum2011 @kalgutkar2019.
+
+#list([*Lexical Metrics* -- These describe surface-level textual properties such as: variable naming conventions, identifier lengths, use of white-space, comment density, or preferred keywords.],
+
+[*Syntactic Metrics* -- These measure the arrangement of language constructs. For example, the frequency of control structures such as loops (e.g., `for`, `while`) or conditionals (e.g., `if`, `else`), average nesting depth, or use of specific programming conventions.],
+
+[*Semantic Metrics* -- These capture the author’s problem-solving habits @stein2009: API usage, data-flow choices and preferred algorithms.],
+
+[*Structural and Behavioural Metrics* -- These focus on how a program behaves and its higher-level organisation. ],
+indent: 0.6cm, spacing: 0.4cm,
+)
+#linebreak()
+
+Collectively, these metrics form the conceptual foundation for feature extraction. They embody the "fingerprints" that machine learning models aim to quantify given a set of data. The method for extracting these features and how they manifest in compiled binaries will be discussed further in *Chapter 3*.
+
+== Applicable Metrics in the Context of Machine Learning
+
+When considering which metrics to focus on in the context of machine learning, it is necessary to identify which of the previously defined metrics can be represented as measurable and quantifiable features that can be mathematically represented. While lexical and syntactic traits are the most intuitive to analyse, their availability depends on the format of the code being studied. In the context of compiled binaries, the focus of this project, many high-level stylistic markers — such as variable naming or spacing — are removed during compilation @caliskan2015. Binaries are also often obfuscated (more in *Chapter 3*), especially by malicious authors @claudia2023, adding another layer of complexity. Therefore, the focus must shift toward metrics that either survive compilation or can be inferred through disassembly via decompilers.
+
+First, we can examine features that fall under the *lexical* category:
+#list(
+  [*Line Length/Count* -- The length of lines and their total number in the file.],
+  [*Number of Operands/Variables* -- The count of operands and variables in the file.],
+  [*Instruction Frequency* -- Statistical counts of machine instructions (e.g., `mov`, `cmp`, `jmp`), which can also indirectly reflect an author’s structural and syntactic tendencies.],
+  [*Instruction n-grams* -- Short sequences of instructions that act as stylistic proxies for common control or data manipulation patterns.],
+  indent: 0.6cm, spacing: 0.4cm,
+)
+#pagebreak()
+Next, the main *syntactic* features:
+#list(
+  [*Average Function Size/Count* -- The distribution of function lengths and total function count, potentially indicating individual decomposition or abstraction styles.],
+  indent: 0.6cm, spacing: 0.4cm,
+)
+The *semantic* features include:
+#list(
+  [*Control-Flow Graph Features* -- Quantitative properties such as loop depth, branching frequency, and cyclomatic complexity @theiling2000 that reveal higher-level structural habits.],
+  [*Dataflow Analysis* -- The way data moves throughout the program's runtime.],
+  indent: 0.6cm, spacing: 0.4cm,
+)
+
+The main *behavioural* feature that we will use is:
+#list(
+  [*Library and API Call Usage* -- Preferences in system or library calls that persist across compilations.],
+  indent: 0.6cm, spacing: 0.4cm,
+)
+
+Among all these features, it should be taken into consideration that what may appear to be features inside extracted binaries may also simply be artifacts produced by compilation @ali2025. This will mean taking extra care in the analysis of features extracted, ensuring that artifacts can be identified and removed from consideration.
+#linebreak()
+
+== Summary and Conclusion
+
+Over the course of this chapter, we have examined the theoretical and practical foundations of code authorship attribution, outlining its key objectives, measurable stylistic metrics and evaluating their applicability within a machine learning context. While lexical and syntactic features offer rich descriptive potential in source-code-level analysis, their usefulness significantly diminishes in compiled binaries due to the loss of high-level stylistic elements (variable names, whitespace/commenting style) during compilation and obfuscation.
+
+Consequently, this project focuses on features that are retained during the compilation process and remain quantifiable in binary form. Metrics such as control-flow complexity and library call usage provide the strongest candidates for representing authorial style in compiled executables. These features, though abstracted from the original source, can still capture meaningful patterns of authorial behaviour suitable for machine learning classification and clustering tasks.
+
+However, it is also evident that binary authorship attribution faces notable challenges, namely compilation artifacts, obfuscation and time complexity.
+
+The following chapter will build upon these conceptual foundations by investigating how the identified metrics can be systematically derived from compiled binaries. It will focus on the practical processes of extracting, structuring, and preparing these features for use in machine learning models.
+
+#pagebreak()
+
+= Binary Feature Extraction
+#pagebreak()
+
+= Machine Learning
+#pagebreak() 
 #bibliography("references.bib")
