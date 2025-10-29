@@ -15,7 +15,7 @@
 ) = {
   // === DOCUMENT SETUP ===
   set document(title: [#title], author: author)
-  set text(font:"Nimbus Sans")
+  set text(font:"Nimbus Sans L")
   set par(justify: true)
   show link: underline
 
@@ -201,7 +201,7 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
 
 = Author Attribution
 
-== Introduction
+== Introduction To Author Attribution
 
 In this section, we will explore the theories and practices pertaining to the attribution of a piece of code to a known author. While not all these methods are easily measurable in the context of machine learning, the underpinning concepts will heavily influence the approach to author attribution. Abstractly, the process involves identifying an author's "fingerprint", and using syntactic identifiers within their writing style in order to determine whether a piece of code fits their respective fingerprint. In the context of computer security, accurately and reliably identifying adversaries is a very desirable goal @stein2009. This capability not only supports forensic investigations and accountability but may also serve as a deterrent to future attacks by reducing the perceived anonymity of adversaries. In this report, we will delve into some objectives that author attribution aims to achieve, some metrics that can be used for identifying authors, then putting these metrics in context and evaluating their relevance to this project's goals and technical implementation.
 
@@ -280,6 +280,16 @@ The following chapter will build upon these conceptual foundations by investigat
 #pagebreak()
 
 = Binary Feature Extraction
+
+== Introduction to Binary Feature Extraction
+
+In this chapter, we examine the process of taking compiled binary files as input and extracting meaningful features from it. Building upon the attribution metrics discussed in *Chapter 2*, we can tailor the extraction process to yield only the features we care to examine, ignoring some more complex analysis. This process is non-trivial; compilers remove or alter high-level information such as variable names, indentation, or comments, leaving behind machine instructions and structural artefacts. As a result, feature extraction must operate at a lower abstraction level. We will further establish the concept of feature extraction: the types of analysis (static and dynamic), as well as their challenges. On top of this, developing a feature extraction pipeline will be very important, which will also be developed further in this report.
+
+== Static and Dynamic Analysis
+
+== Analysing Binary files
+
+
 #pagebreak()
 
 = Machine Learning
