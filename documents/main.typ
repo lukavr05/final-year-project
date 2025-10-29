@@ -293,11 +293,33 @@ Furthermore, we will establish the concept of feature extraction: the types of a
 
 When considering analysis of binary files, there are two main ways methods: static analysis and dynamic analysis. Static analysis, on the one hand, examines the binary _without_ executing it. This limits the features we are able to extract, but nonetheless we can still access features such as control flow. Dynamic analysis, however, focuses on the changes made during a binary file's runtime. This allows us to observe system/API calls and execution traces as they occur. While this broadens the scope for potential features, in the context of this project, it will be unsafe as we aim to determine the authors of potentially malicious code. This means that malicious code would have to be run in order to perform dynamic analysis. Of course, this presents a serious security risk, which will be avoided by excluding dynamic analysis from this project.
 
+== Feature Extraction Pipeline
+
+The binary feature extraction pipeline represents the process through which compiled binaries are transformed into numerical features suitable for machine learning. The goal is to move from raw executable code (simply a sequence of bytes) to a structured set of features that captures meaningful stylistic or structural traits of the binary file. most of my pipeline will be using Python, as there are plenty of available and accessible libraries, as well as providing easier formatting when converting to machine learning (which will also be done in Python).
+
+The basic structure of the pipeline is as follows:
+
+#set align(center)
+#linebreak()
+*Binary Input* #sym.arrow.r.double *Disassembly* #sym.arrow.r.double *Feature Extraction* #sym.arrow.r.double *Feature Normalisation*
+#set align(left)
+
+=== Binary Input/Preprocessing
+The pipeline begins with compiled executables that we want to extract from(e.g., `.exe` or `.bin` files). These binaries are read in raw byte form using Python’s in-built I/O mechanisms. The main aim of this stage is to validate that the file exists, detect the architecture (e.g., x86, x64, ARM) that it was compiled on/for and convert the file into a set of bytes. All these prepare the file for the next stage: disassembly.
+
+=== Disassembly
+At this point, the binary data is still *machine code* - unreadable to humans and difficult to analyse. The disassembly stage converts this machine code into assembly language, which represents each machine instruction symbolically (e.g., `mov`, `jmp`, `call`). Extracting these is very useful in determining control flow and instruction frequency in the faeture extraction phase.
+
+=== Feature Extraction
+Once the binary is disassembled, the next step is to extract measurable features that can capture the stylistic or structural characteristics of the author’s code, to be fed into a machine learning algorithm.
+
+=== Feature Normalisation
+Different binaries vary in size and instruction count, so raw frequency counts are normalised (by using the average frequency per instruction) to allow fair comparison between samples. 
+
 == Analysing Binary Files
 
+=== Basic Extraction
 Before we can extract meaningful data, we need to examine how we can even read a binary file in code. First, we will need a minimal file to test on. Below is a simple C program `example.c` that will be used for testing:
-
-
 
 ```c
 int main() {
@@ -306,6 +328,7 @@ int main() {
     int c = a + b;
 }
 ```
+
 Compiling this gives `example1.exe`, which we can pass into a Python program for some basic analysis. Below is a minimal Python script for extracting raw binary data from a file:
 
 ```py
@@ -324,6 +347,9 @@ Running this script produces the following output (which has been heavily trunca
 08\x0b\x05:\x0b;\x059\x0b\x01\x13\x00\x00C\x04\x01\x03\x08>\x0b\x0b\x0bI\x13:\x0b;\x0b9\x0b\x01\x13\x00\x00D\x13\x01\x0b\x0b:\x0b;\x0b9\x0b\x01\x13\x00\x00E\x04\x01\x03\x0e>\x0b\x0b\x0bI\x13:\x0b;\x0b9\x0b\x01\x13\x00\x00F\x16\x00\x03\x0e:\x0b;\x0b9\x0bI\x13\x00\x00G\x13\x01\x03\x08\x0b\x0b:\x0b;\x0b9\x0b\x01\x13\x00\x00H4\x00\x03\x08:\x0b;\x059\x0bI\x13?\x19\x02\x18\x00\x00I.\x01?\x19\x03\x08:\x0b;\x059\x0b\'\x19\x87\x01\x19<\x19\x01\x13\x00\x00J.\x00?\x19\x03\x08:\x0b;\x059\x0b\'\x19<\x19\x00\x00K.\x01?\x19\x03\x08:\x0b;\x0b9\x0b\'\x19\x87\x01\x19<\x19\x01\x13\x00\x00L.\x01?\x19\x03\x08:\x0b;\x059\x0b\'\x19I\x13\x11\x01\x12\x07@\x18z\x19\x01\x13\x00\x00M\x05\x00\x03\x08:\x0b;
 ...
 ```
+
+=== Using the `capstone` Library
+While extracting the raw binary data is useful, it is difficult to extract something meaningful just from these strings. However, using a Python library called `capstone`, we can convert 
 
 #pagebreak()
 
