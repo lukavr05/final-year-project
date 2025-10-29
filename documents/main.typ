@@ -18,6 +18,8 @@
   set text(font:"Nimbus Sans L")
   set par(justify: true)
   show link: underline
+  show raw: set text(font: "CaskaydiaMono NF", weight: "regular")
+  show raw.where(block: true): set block(inset: 2.5em)
 
   // === HEADING STYLES ===
   show heading: set block(above: 30pt, below: 30pt)
@@ -283,12 +285,45 @@ The following chapter will build upon these conceptual foundations by investigat
 
 == Introduction to Binary Feature Extraction
 
-In this chapter, we examine the process of taking compiled binary files as input and extracting meaningful features from it. Building upon the attribution metrics discussed in *Chapter 2*, we can tailor the extraction process to yield only the features we care to examine, ignoring some more complex analysis. This process is non-trivial; compilers remove or alter high-level information such as variable names, indentation, or comments, leaving behind machine instructions and structural artefacts. As a result, feature extraction must operate at a lower abstraction level. We will further establish the concept of feature extraction: the types of analysis (static and dynamic), as well as their challenges. On top of this, developing a feature extraction pipeline will be very important, which will also be developed further in this report.
+In this chapter, we examine the process of taking compiled binary files as input and extracting meaningful features from it. Building upon the attribution metrics discussed in *Chapter 2*, we can tailor the extraction process to yield only the features we care to examine, ignoring some more complex analysis. This process is non-trivial; compilers remove or alter high-level information such as variable names, indentation, or comments, leaving behind machine instructions and structural artefacts @alrabaee2020. As a result, feature extraction must operate at a lower abstraction level. 
+
+Furthermore, we will establish the concept of feature extraction: the types of analysis (static and dynamic), as well as their challenges. On top of this, developing a feature extraction pipeline will be very important, which will also be developed further in this report.
 
 == Static and Dynamic Analysis
 
-== Analysing Binary files
+When considering analysis of binary files, there are two main ways methods: static analysis and dynamic analysis. Static analysis, on the one hand, examines the binary _without_ executing it. This limits the features we are able to extract, but nonetheless we can still access features such as control flow. Dynamic analysis, however, focuses on the changes made during a binary file's runtime. This allows us to observe system/API calls and execution traces as they occur. While this broadens the scope for potential features, in the context of this project, it will be unsafe as we aim to determine the authors of potentially malicious code. This means that malicious code would have to be run in order to perform dynamic analysis. Of course, this presents a serious security risk, which will be avoided by excluding dynamic analysis from this project.
 
+== Analysing Binary Files
+
+Before we can extract meaningful data, we need to examine how we can even read a binary file in code. First, we will need a minimal file to test on. Below is a simple C program `example.c` that will be used for testing:
+
+
+
+```c
+int main() {
+    int a = 0;
+    int b = 5;
+    int c = a + b;
+}
+```
+Compiling this gives `example1.exe`, which we can pass into a Python program for some basic analysis. Below is a minimal Python script for extracting raw binary data from a file:
+
+```py
+def extract(path):
+    with open(path, "rb")as file:
+        code = file.read()
+
+    return code
+
+print(extract("../examples/example1.exe"))
+```
+
+Running this script produces the following output (which has been heavily truncated):
+
+```
+08\x0b\x05:\x0b;\x059\x0b\x01\x13\x00\x00C\x04\x01\x03\x08>\x0b\x0b\x0bI\x13:\x0b;\x0b9\x0b\x01\x13\x00\x00D\x13\x01\x0b\x0b:\x0b;\x0b9\x0b\x01\x13\x00\x00E\x04\x01\x03\x0e>\x0b\x0b\x0bI\x13:\x0b;\x0b9\x0b\x01\x13\x00\x00F\x16\x00\x03\x0e:\x0b;\x0b9\x0bI\x13\x00\x00G\x13\x01\x03\x08\x0b\x0b:\x0b;\x0b9\x0b\x01\x13\x00\x00H4\x00\x03\x08:\x0b;\x059\x0bI\x13?\x19\x02\x18\x00\x00I.\x01?\x19\x03\x08:\x0b;\x059\x0b\'\x19\x87\x01\x19<\x19\x01\x13\x00\x00J.\x00?\x19\x03\x08:\x0b;\x059\x0b\'\x19<\x19\x00\x00K.\x01?\x19\x03\x08:\x0b;\x0b9\x0b\'\x19\x87\x01\x19<\x19\x01\x13\x00\x00L.\x01?\x19\x03\x08:\x0b;\x059\x0b\'\x19I\x13\x11\x01\x12\x07@\x18z\x19\x01\x13\x00\x00M\x05\x00\x03\x08:\x0b;
+...
+```
 
 #pagebreak()
 
