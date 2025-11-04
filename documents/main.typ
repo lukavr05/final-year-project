@@ -316,7 +316,7 @@ Once the binary is disassembled, the next step is to extract measurable features
 === Feature Normalisation
 Different binaries vary in size and instruction count, so raw frequency counts are normalised (by using the average frequency per instruction) to allow fair comparison between samples. 
 
-== Analysing Binary Files
+== Practical Binary Analysis
 
 === Basic Extraction
 Before we can extract meaningful data, we need to examine how we can even read a binary file in code. First, we will need a minimal file to test on. Below is a simple C program `example.c` that will be used for testing:
@@ -337,8 +337,6 @@ def extract(path):
         code = file.read()
 
     return code
-
-print(extract("../examples/example1.exe"))
 ```
 
 Running this script produces the following output (which has been heavily truncated):
@@ -347,9 +345,75 @@ Running this script produces the following output (which has been heavily trunca
 08\x0b\x05:\x0b;\x059\x0b\x01\x13\x00\x00C\x04\x01\x03\x08>\x0b\x0b\x0bI\x13:\x0b;\x0b9\x0b\x01\x13\x00\x00D\x13\x01\x0b\x0b:\x0b;\x0b9\x0b\x01\x13\x00\x00E\x04\x01\x03\x0e>\x0b\x0b\x0bI\x13:\x0b;\x0b9\x0b\x01\x13\x00\x00F\x16\x00\x03\x0e:\x0b;\x0b9\x0bI\x13\x00\x00G\x13\x01\x03\x08\x0b\x0b:\x0b;\x0b9\x0b\x01\x13\x00\x00H4\x00\x03\x08:\x0b;\x059\x0bI\x13?\x19\x02\x18\x00\x00I.\x01?\x19\x03\x08:\x0b;\x059\x0b\'\x19\x87\x01\x19<\x19\x01\x13\x00\x00J.\x00?\x19\x03\x08:\x0b;\x059\x0b\'\x19<\x19\x00\x00K.\x01?\x19\x03\x08:\x0b;\x0b9\x0b\'\x19\x87\x01\x19<\x19\x01\x13\x00\x00L.\x01?\x19\x03\x08:\x0b;\x059\x0b\'\x19I\x13\x11\x01\x12\x07@\x18z\x19\x01\x13\x00\x00M\x05\x00\x03\x08:\x0b;
 ...
 ```
+=== Using The `capstone` Framework
+While extracting the raw binary data is useful, it is difficult to extract something meaningful just from these byte strings. To translate this low-level data into readable assembly instructions, we can use the `capstone` disassembly framework, a widely used, lightweight, and multi-architecture disassembler written in C with Python bindings.
 
-=== Using the `capstone` Library
-While extracting the raw binary data is useful, it is difficult to extract something meaningful just from these strings. However, using a Python library called `capstone`, we can convert 
+```py
+from capstone import *
+
+def dissassemble(path):
+    md = Cs(CS_ARCH_X86, CS_MODE_64)
+
+    with open(path, "rb") as file:
+        code = file.read()
+
+    for i in md.disasm(code, 0x1000):
+        print("0x%x:\t%s\t%s" % (i.address, i.mnemonic, i.op_str))
+```
+
+We first initialise the Python object for `capstone` with class `Cs`. This class requires two arguments: the hardware architecture & the hardware mode. In this sample, we specify 64-bit code for X86 architecture.
+
+After setting it up, we use the `disasm` function, taking the byte string we get from the code, as well as the address for the first (relative) instruction `0x1000`. Then, for each instruction read in, we print the realtive address, mnemonic and the op string.
+
+Dissassembling `example1.exe` gives us the following output:
+```
+0x1000: pop     r10
+0x1002: nop
+0x1003: add     byte ptr [rbx], al
+0x1005: add     byte ptr [rax], al
+0x1007: add     byte ptr [rax + rax], al
+0x100a: add     byte ptr [rax], al
+```
+
+We can then use this to determine the number of each instruction, and hence the instruction frequency. For this example, I will provide a more complicated example for the binary file, compiled from the below C program:
+
+```C
+#include <stdio.h>
+
+int main() {
+    char c = 'H';
+    int a = 10;
+    int b = 15;
+    int x = a + b;
+
+    printf("%c", c);
+    printf("%d", x);
+}
+```
+
+We can store the counts of each mnemonic using a Python dictionary object.
+
+```py
+def getInstructionCounts(path):
+   [...]
+    for i in md.disasm(code, 0x1000):
+        mnemonic = i.mnemonic
+        if mnemonic in instruction_counts:
+            instruction_counts[mnemonic] += 1
+        else:
+            instruction_counts[mnemonic] = 1
+
+    for instr, count in instruction_counts.items():
+        print(f"{instr}: {count}")
+```
+
+Providing the output:
+```
+pop: 1
+nop: 1
+add: 4
+```
+
 
 #pagebreak()
 
