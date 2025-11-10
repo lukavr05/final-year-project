@@ -5,4 +5,4 @@ def extract(path):
 
     return code
 
-print(extract("../examples/example1.exe"))
+print(extract("../examples/example1"))

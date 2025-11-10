@@ -18,4 +18,6 @@ def getInstructionCounts(path):
     for instr, count in instruction_counts.items():
         print(f"{instr}: {count}")
 
-getInstructionCounts("../examples/example2.exe")
+getInstructionCounts("../examples/example1")
+print("=======")
+getInstructionCounts("../examples/example2.o")
