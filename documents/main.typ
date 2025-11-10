@@ -15,11 +15,12 @@
 ) = {
   // === DOCUMENT SETUP ===
   set document(title: [#title], author: author)
-  set text(font:"Nimbus Sans L")
+  set text(font:"Nimbus Sans")
   set par(justify: true)
   show link: underline
-  show raw: set text(font: "CaskaydiaMono NF", weight: "regular")
+  show raw: set text(font: "CaskaydiaCove NF", weight: "regular")
   show raw.where(block: true): set block(inset: 2.5em)
+
 
   // === HEADING STYLES ===
   show heading: set block(above: 30pt, below: 30pt)
@@ -329,7 +330,7 @@ int main() {
 }
 ```
 
-Compiling this gives `example1.exe`, which we can pass into a Python program for some basic analysis. Below is a minimal Python script for extracting raw binary data from a file:
+Compiling this using the `gcc` compiler on a Linux system gives `example1`, an ELF 64-bit LSB pie executable, which we can pass into a Python program for some basic analysis. Below is a minimal Python script for extracting raw binary data from a file:
 
 ```py
 def extract(path):
@@ -342,11 +343,24 @@ def extract(path):
 Running this script produces the following output (which has been heavily truncated):
 
 ```
-08\x0b\x05:\x0b;\x059\x0b\x01\x13\x00\x00C\x04\x01\x03\x08>\x0b\x0b\x0bI\x13:\x0b;\x0b9\x0b\x01\x13\x00\x00D\x13\x01\x0b\x0b:\x0b;\x0b9\x0b\x01\x13\x00\x00E\x04\x01\x03\x0e>\x0b\x0b\x0bI\x13:\x0b;\x0b9\x0b\x01\x13\x00\x00F\x16\x00\x03\x0e:\x0b;\x0b9\x0bI\x13\x00\x00G\x13\x01\x03\x08\x0b\x0b:\x0b;\x0b9\x0b\x01\x13\x00\x00H4\x00\x03\x08:\x0b;\x059\x0bI\x13?\x19\x02\x18\x00\x00I.\x01?\x19\x03\x08:\x0b;\x059\x0b\'\x19\x87\x01\x19<\x19\x01\x13\x00\x00J.\x00?\x19\x03\x08:\x0b;\x059\x0b\'\x19<\x19\x00\x00K.\x01?\x19\x03\x08:\x0b;\x0b9\x0b\'\x19\x87\x01\x19<\x19\x01\x13\x00\x00L.\x01?\x19\x03\x08:\x0b;\x059\x0b\'\x19I\x13\x11\x01\x12\x07@\x18z\x19\x01\x13\x00\x00M\x05\x00\x03\x08:\x0b;
-...
+b'\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00>\x00\
+x01\x00\x00\x00@\x10\x00\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00`6
+\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00@\x008\x00\r\x00@\x00\x1e\x00\x1d\x00\x06
+\x00\x00\x00\x04\x00\x00\x00@\x00\x00\x00\x00\x00
+\x00\x00@\x00\x00\x00\x00\x00\x00\x00@\x00\x00
+\x00\x00\x00\x00\x00\xd8\x02\x00\x00\x00\x00\x00\x00\xd8\x02\x00\x00
+\x00\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x03
+\x00\x00\x00\x04\x00\x00\x00\x18\x03\x00\x00\x00\x00\x00\x00\x18\x03\x00\x00
+\x00\x00\x00\x00\x18\x03\x00\x00\x00\x00\x00\x00\x1c
+\x00\x00\x00\x00\x00\x00\x00\x1c\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00
+\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00
+\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00
+\xe0\x05\x00\x00\x00\x00\x00\x00\xe0\x05\x00\x00\x00\x00\x00
+
+[...]
 ```
 === Using The `capstone` Framework
-While extracting the raw binary data is useful, it is difficult to extract something meaningful just from these byte strings. To translate this low-level data into readable assembly instructions, we can use the `capstone` disassembly framework, a widely used, lightweight, and multi-architecture disassembler written in C with Python bindings.
+While extracting the raw binary data is useful, it is difficult to extract something meaningful just from these byte strings. To translate this low-level data into readable assembly instructions, we can use the `capstone` disassembly framework, a widely used, lightweight, and multi-architecture disassembler written in C with Python bindings @capstone2013.
 
 ```py
 from capstone import *
@@ -363,17 +377,52 @@ def dissassemble(path):
 
 We first initialise the Python object for `capstone` with class `Cs`. This class requires two arguments: the hardware architecture & the hardware mode. In this sample, we specify 64-bit code for X86 architecture.
 
-After setting it up, we use the `disasm` function, taking the byte string we get from the code, as well as the address for the first (relative) instruction `0x1000`. Then, for each instruction read in, we print the realtive address, mnemonic and the op string.
+After setting it up, we use the `disasm` function, taking the byte string we get from the code, as well as the address for the first (relative) instruction `0x1000`. Then, for each instruction read in, we print the relative address, mnemonic and the op string.
 
-Dissassembling `example1.exe` gives us the following output:
+Dissassembling `example1` gives us the following (truncated) output:
 ```
-0x1000: pop     r10
-0x1002: nop
-0x1003: add     byte ptr [rbx], al
-0x1005: add     byte ptr [rax], al
-0x1007: add     byte ptr [rax + rax], al
-0x100a: add     byte ptr [rax], al
+0x1000:	jg	0x1047
+0x1002:	add	r8b, byte ptr [rcx]
+0x1006:	add	dword ptr [rax], eax
+0x1008:	add	byte ptr [rax], al
+0x100a:	add	byte ptr [rax], al
+0x100c:	add	byte ptr [rax], al
+0x100e:	add	byte ptr [rax], al
+0x1010:	add	eax, dword ptr [rax]
+0x1012:	add	byte ptr ds:[rcx], al
+0x1015:	add	byte ptr [rax], al
+0x1017:	add	byte ptr [rax + 0x10], al
+0x101a:	add	byte ptr [rax], al
+[...]
 ```
+
+Instantly, a major issue becomes apparent, being that the number of instructions is far greater than what we would expect for such a simple program. This occurs as, when compiled using `gcc` with default options, the generated ELF file includes not only user-defined functions but also large amounts of startup and library code introduced by the C runtime and standard library. Consequently, disassembling the entire binary yields a far greater instruction count than the source code suggests.
+
+There are myriad approaches to extract information from just the `main` function. Namely, instead of compiling using the command `gcc example1.c -o example1` (producing an ELF file), we can create an object file using `gcc -c example1.c -o example1.o`. However, due to this project using external datasets of binaries using any number of compilers, we will need to produce an extraction tool that can dynamically remove "noise" produced by compilers and runtime environments. 
+
+=== Analysing Binary Structure
+
+To tackle this newly arisen issue of compiler artefacts produced in the compilation process, we will need to analyse how binary files are structured so we can extract only the user-generated sections. ELF files, which are one of the simplest formats of binary structure, are split into several sections @tiscommittee1995:
+
+#set align(center)
+#table([*ELF Header*],[*Program Header Table*], [`.text`], [`.rodata`], [`.data`], [...], [`.init`], [`.fini`], [...], [*Section Headers Table*])
+#set align(left)
+#linebreak()
+#list(
+  [*ELF Header* -- Contains the file type, architecture and entry point],
+  [*Program Header Table* -- Describes how to load the program into memory],
+  [*`.text`* -- The main executable code],
+  [*`.rodata`* -- Read-only data, such as constants],
+  [*`.data`* -- Global/static variables that are initialised in the program],
+  [*`.init`* -- The initialisation code that runs _before_ the `main` function],
+  [*`.fini`* -- The finalisation code that runs _after_ the `main` function],
+  indent: 0.6cm, spacing: 0.4cm,
+)
+_Note that this is not a comprehensive structural breakdown, but contains all sections relevant to the project._ 
+
+From this table, we can see that the `.text` section is what we are looking to extract. Windows also produces PE files, which also include a `.text` section, even though most other sections are named different to that of ELF's. There are several Python libraries available for breaking down ELF and PE files into their sections. For this project, we will be using the `lief` library, as it can handle ELF (Linux), PE (Windows) and has an easy-to-use API.
+
+
 
 We can then use this to determine the number of each instruction, and hence the instruction frequency. For this example, I will provide a more complicated example for the binary file, compiled from the below C program:
 
