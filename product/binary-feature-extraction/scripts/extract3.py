@@ -1,11 +1,16 @@
-from capstone import *
+import lief
+from capstone import Cs, CS_ARCH_X86, CS_MODE_64
 
-def getInstructionCounts(path):
+def getTextfromBinary(path):
+    binary = lief.parse(path)
+
+    text_section = binary.get_section(".text")
+
+    return bytes(text_section.content)
+
+def getInstructionCounts(code: bytes):
+ 
     md = Cs(CS_ARCH_X86, CS_MODE_64)
-
-    with open(path, "rb") as file:
-        code = file.read()
-
     instruction_counts = {}
 
     for i in md.disasm(code, 0x1000):
@@ -18,6 +23,6 @@ def getInstructionCounts(path):
     for instr, count in instruction_counts.items():
         print(f"{instr}: {count}")
 
-getInstructionCounts("../examples/example1")
-print("=======")
-getInstructionCounts("../examples/example2.o")
+
+text = getTextfromBinary("../examples/example1")
+getInstructionCounts(text)
