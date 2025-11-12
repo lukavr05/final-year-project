@@ -422,30 +422,34 @@ _Note that this is not a comprehensive structural breakdown, but contains all se
 
 From this table, we can see that the `.text` section is what we are looking to extract. Windows also produces PE files, which also include a `.text` section, even though most other sections are named different to that of ELF's. There are several Python libraries available for breaking down ELF and PE files into their sections. For this project, we will be using the `lief` library, as it can handle ELF (Linux), PE (Windows) and has an easy-to-use API.
 
+```py
+import lief
 
+def getText(path):
+    binary = lief.parse(path)
 
-We can then use this to determine the number of each instruction, and hence the instruction frequency. For this example, I will provide a more complicated example for the binary file, compiled from the below C program:
+    text_section = binary.get_section(".text")
 
-```C
-#include <stdio.h>
+    print(f".text section offset: {text_section.file_offset:#x}")
+    print(f".text section size:   {text_section.size:#x}")
+    print(f".text virtual addr:   {text_section.virtual_address:#x}")
 
-int main() {
-    char c = 'H';
-    int a = 10;
-    int b = 15;
-    int x = a + b;
-
-    printf("%c", c);
-    printf("%d", x);
-}
 ```
 
-We can store the counts of each mnemonic using a Python dictionary object.
+Here, we use the `lief` library to get some information about the `.text` section of the ELF file. Namely, we can extract the offset, size, and virtual address of the section. Running this code on the binary `example1` yields the following output:
+
+```
+.text section offset: 0x1040
+.text section size:   0x10d
+.text virtual addr:   0x1040
+```
+
+We can then use this function in conjunction with our extraction code to determine the count of each instruction, and hence the instruction frequency. We can store the counts of each mnemonic using a Python dictionary object.
 
 ```py
-def getInstructionCounts(path):
+def getInstructionCounts(text_bytes):
    [...]
-    for i in md.disasm(code, 0x1000):
+    for i in md.disasm(text_bytes, 0x1000):
         mnemonic = i.mnemonic
         if mnemonic in instruction_counts:
             instruction_counts[mnemonic] += 1
@@ -458,11 +462,57 @@ def getInstructionCounts(path):
 
 Providing the output:
 ```
-pop: 1
-nop: 1
-add: 4
+xor: 3
+mov: 15
+pop: 3
+and: 1
+push: 4
+lea: 5
+call: 3
+hlt: 1
+nop: 8
+cmp: 3
+je: 5
+[...]
 ```
 
+This output is far more reasonable in terms of instruction counts for such a simple program. While some may artifacts may be preserved, we can now see accurate counts for many main assembly instructions.
+
+=== Instruction Count Normalisation
+
+The next logical step is to normalise the instruction counts, as some longer binaries may have higher counts of instructios overall, we care about the relative *frequencies* (or ratios) of these instructions. As well as this, some binary files may contain a wider array of instructions, which could skew data if we dynamically inspect the instruction counts. This requires special attention, and for the purposes of the project we will focus on the main instructions that are most common and will lead to more accurate authorship attribution. 
+
+Through the research of Caliskan-Islam et al. @caliskan2015 and Rosenblum et al. @rosenblum2011, they determined instructions that pertain to control flow (`jmp`, `call`, `ret`, `cmp`), memory control (`mov`, `push`, `pop`) and arithmetic (`add`, `sub`) can be used to indicate authorship. The ratios of these will be considered and added as part of the *feature set* of the machine learning aspect.
+
+In order to determine the frequencies of instructions, we will first get the total number of instructions in the `.text` section by iterating through the dictionary object returned by `getInstructionCounts`. Then, by defining some relevant instructions, we can get their count from the dictionary and trivially calculate their frequency by dividing the count by the total number of instructions. If the instruction is not found in the dictionary, we will simply set the frequency to 0. 
+
+```py
+def getInstructionFrequencies(counts):
+
+    relevant_instructions = ["jmp", "call", "ret", "cmp", "mov", "push", "pop", "add", "sub"]
+    freqs = np.zeros(len(relevant_instructions), dtype=float)
+    total_instructions = 0
+
+    for count in counts.values():
+        total_instructions += count
+
+    for i in range(0, len(relevant_instructions)):
+        if relevant_instructions[i] in counts:
+            c = counts.get(relevant_instructions[i])
+            freqs[i] = c / total_instructions
+        else:
+            freqs[i] = 0
+
+    print(freqs)
+```
+
+Performing this on `example1` produces the output:
+
+```
+[0.03703704 0.0617284  0.0617284  0.03703704 0.25925926 0.04938272 0.02469136 0.02469136 0.02469136]
+```
+
+Which is a `numpy` array of type `float`, containing the frequencies neatly formatted as `numpy` and `sklearn` are extremely compatible. 
 
 #pagebreak()
 
