@@ -43,6 +43,20 @@ def getInstructionFrequencies(counts):
 
     print(freqs)
 
-text_bytes = getTextfromBinary("../examples/example3")
-counts = getInstructionCounts(text_bytes)
-getInstructionFrequencies(counts)
+def getNGrams(code: bytes, n):
+    md = Cs(CS_ARCH_X86, CS_MODE_64)
+    instructions = []
+
+    for i in md.disasm(code, 0x1000):
+        instructions.append(i.mnemonic)
+
+    ngrams = []
+
+    for i in range(len(instructions) - n + 1):
+        ngram = tuple(instructions[i:i+n])
+        ngrams.append(ngram)
+    
+    return ngrams
+
+code = getTextfromBinary("../examples/example1")
+print(getNGrams(code, 3))
