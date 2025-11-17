@@ -444,7 +444,13 @@ Here, we use the `lief` library to get some information about the `.text` sectio
 .text virtual addr:   0x1040
 ```
 
-We can then use this function in conjunction with our extraction code to determine the count of each instruction, and hence the instruction frequency. We can store the counts of each mnemonic using a Python dictionary object.
+== Instruction Frequency
+
+Now, given that we can extract the `.text` section of a binary file, we can look at extracting features from given this information. First, we focus on *Instruction Frequency*. 
+
+=== Extracting Raw Instruction Counts
+
+We can use the following function in conjunction with our extraction code to determine the count of each instruction, and hence the instruction frequency. We can store the counts of each mnemonic using a Python dictionary object.
 
 ```py
 def getInstructionCounts(text_bytes):
@@ -478,7 +484,7 @@ je: 5
 
 This output is far more reasonable in terms of instruction counts for such a simple program. While some may artifacts may be preserved, we can now see accurate counts for many main assembly instructions.
 
-=== Instruction Count Normalisation
+=== Normalising Instruction Counts
 
 The next logical step is to normalise the instruction counts, as some longer binaries may have higher counts of instructios overall, we care about the relative *frequencies* (or ratios) of these instructions. As well as this, some binary files may contain a wider array of instructions, which could skew data if we dynamically inspect the instruction counts. This requires special attention, and for the purposes of the project we will focus on the main instructions that are most common and will lead to more accurate authorship attribution. 
 
@@ -515,13 +521,70 @@ Performing this on `example1` produces the output:
 
 Which is a `numpy` array of type `float`, containing the frequencies neatly formatted as `numpy` and `sklearn` are extremely compatible. 
 
-If we run the program on `example1`, `example2` and `example3` (found in the `product/binary-feature-extraction/examples` directory), we can visualise the distribution of the relevant instructions.
+If we run the program on the ELF files `example1`, `example2` and `example3` (found in the `product/binary-feature-extraction/examples` directory), we can visualise the distribution of the relevant instructions.
 
 #figure(
   image("media/bfe_inst_frq.png", width: 74%)
 )
 
-From the graph, we can deduce that the `mov` instruction is the most common throughout the examples, with the others having mild but identifiable differences.
+From the graph, we can deduce that the `mov` instruction is the most common throughout the examples, with the others having tiny but identifiable differences.
+
+To summarise our findings so far with instruction counts: analysing instruction frequency provides a practical and effective method for extracting stylistic features from compiled binaries. Although raw instruction counts vary significantly between programs due to differences in size, optimisation level, and compiler behaviour, focusing on the most common and semantically meaningful/relevant instructions enables the extraction of features that are more reliable. By isolating the `.text` section using Lief and disassembling it with Capstone, the tool captures a consistent representation of program behaviour while avoiding unrelated data or metadata. This reduces compiler-generated noise and emphasises patterns that are more indicative of programmer style rather than compilation artefacts.
+
+== N-grams
+
+N-grams are a very valuable tool for authorship attribution and have been used widely in research @kalgutkar2019 as they are robust and survive compilation @burrows2007. Put simply, instruction n-grams are a sequence of $n$ consecutive instructions, represented by their mnemonics (e.g., `mov`, `jmp`). There are several types of n-grams: 
+#list(
+[With $n = 1$, we have *unigrams*, where we take a 1-dimensional sequence of instructions, in essence the sequence of instructions (e.g., `[mov, jmp, cmp, cmp, add]`).],
+[With $n = 2$, we have *bigrams*, where we take a 2-dimensional sequence of instructions. (e.g., `[[mov, jmp], [jmp,cmp], [cmp, cmp], [cmp, add]]`)],
+[With $n = 3$, we have *trigrams*, where we take a 3-dimensional sequence of instructions. (e.g., `[[mov, jmp, cmp], [jmp, cmp, cmp], [cmp, cmp, add]]`)],
+indent: 0.6cm, spacing: 0.4cm,
+)  
+
+=== Extracting Instruction n-grams
+
+To extract the n-grams of a sequence of instructions, we can use the following function, which takes as its parameters: the code section and the degree of $n$.
+
+```py
+def getNGrams(code: bytes, n):
+    md = Cs(CS_ARCH_X86, CS_MODE_64)
+    instructions = []
+
+    for i in md.disasm(code, 0x1000):
+        instructions.append(i.mnemonic)
+
+    ngrams = []
+
+    for i in range(len(instructions) - n + 1):
+        ngram = tuple(instructions[i:i + n])
+        ngrams.append(ngram)
+    
+    return ngrams
+```
+This function first extracts the raw list of instructions, then using a sliding window approach, extracts each n-gram as a tuple and stores them all in a list.
+
+Executing this function on `example` with $n = 2$ gives us an output:
+
+```
+[('xor', 'mov'), ('mov', 'pop'), ('pop', 'mov'), ('mov', 'and'), ('and', 'push'), ('push', 'push'), ('push', 'xor'), ('xor', 'xor'), ('xor', 'lea'), 
+[...]
+```
+
+And with $n = 3$:
+```
+[('xor', 'mov', 'pop'), ('mov', 'pop', 'mov'), ('pop', 'mov', 'and'), ('mov', 'and', 'push'), ('and', 'push', 'push'), ('push', 'push', 'xor'), ('push', 'xor', 'xor')
+[...] 
+```
+
+== Normalising Instruction n-grams
+
+Now we have extracted the raw n-grams, the challenge of normalising this list of tuples 
+
+== Control Flow
+
+=== Extracting Control Flow
+
+Analysing the control flow of a binary file can be a very good indicator of authorship @hayes2010. The use of *Control Flow Graphs* (CFGs) are imperative to ascertain how a program is structured. 
 
 #pagebreak()
 
