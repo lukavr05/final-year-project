@@ -497,8 +497,9 @@ def getInstructionFrequencies(counts):
         total_instructions += count
 
     for i in range(0, len(relevant_instructions)):
-        if relevant_instructions[i] in counts:
-            c = counts.get(relevant_instructions[i])
+        current_instr = relevant_instructions[i]
+        if current_instr in counts:
+            c = counts.get(current_instr)
             freqs[i] = c / total_instructions
         else:
             freqs[i] = 0
@@ -513,6 +514,14 @@ Performing this on `example1` produces the output:
 ```
 
 Which is a `numpy` array of type `float`, containing the frequencies neatly formatted as `numpy` and `sklearn` are extremely compatible. 
+
+If we run the program on `example1`, `example2` and `example3` (found in the `product/binary-feature-extraction/examples` directory), we can visualise the distribution of the relevant instructions.
+
+#figure(
+  image("media/bfe_inst_frq.png", width: 74%)
+)
+
+From the graph, we can deduce that the `mov` instruction is the most common throughout the examples, with the others having mild but identifiable differences.
 
 #pagebreak()
 

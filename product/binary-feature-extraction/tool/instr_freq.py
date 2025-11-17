@@ -34,8 +34,9 @@ def getInstructionFrequencies(counts):
         total_instructions += count
 
     for i in range(0, len(relevant_instructions)):
-        if relevant_instructions[i] in counts:
-            c = counts.get(relevant_instructions[i])
+        current_instr = relevant_instructions[i]
+        if current_instr in counts:
+            c = counts.get(current_instr)
             freqs[i] = c / total_instructions
         else:
             freqs[i] = 0
