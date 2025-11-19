@@ -578,14 +578,66 @@ And with $n = 3$:
 
 == Normalising Instruction n-grams
 
-Now we have extracted the raw n-grams, the challenge of normalising this list of tuples 
+Now we have extracted the raw n-grams, the challenge of normalising this list of tuples in a way that can be processed by a machine learning algorithm. A well-known and proven method is TF-IDF (Term Frequency - Inverse Document Frequency). It is essentially a way to weight the importance of a word (or token) in a document, _relative_ to a collection of documents. This means that tokens which appear a lot in one document won't affect the overall score as much @bafna2016. In the context of the project, each "document" is a binary file and each "token" is an instruction n-gram. However, this normalisation is done at the dataset level, as the IDF part requires the entire corpus. This means, for now, we can just do the TF part, where we can store all the unique n-grams in a file, with their count. Then, when we have an entire dataset, we can implement a pipeline (more in *Chapter 4*) that can handle the IDF.
+
 
 == Control Flow
 
-=== Extracting Control Flow
-
 Analysing the control flow of a binary file can be a very good indicator of authorship @hayes2010. The use of *Control Flow Graphs* (CFGs) are imperative to ascertain how a program is structured. 
 
+=== Extracting A Control Flow Graph
+
+While it would be possible to create a CFG from scratch in Python, I believe it will be more time and memory efficient to use the `angr` library, which can create CFGs for any binary file easily. Using elementary objects, we can extract the CFG itself - and more importantly - the information contained within it. As shown below, the extraction itself is very simple:
+
+```py
+def getControlFlowGraph(path):
+    binary = angr.Project(path, load_options={"auto_load_libs": False})
+
+    cfg = binary.analyses.CFGFast()
+    
+    return cfg
+```
+
+We first instantiate a `Project` object, which in essence stores everything related to the binary we are analysing. The object takes the path to the binary file, as well as some load options as parameters. the `auto_load_libs` property simply specifies that we want the tool to *ignore* shared libraries. As the CFG analysis by default does not distinguish between code from different binary objects @shoshitaishvili2016.
+
+Using the following code, we can extract some meaningful features from the extracted CFG:
+
+```py
+print("Graph Type:", cfg.model.graph)
+print("\nNodes:")
+for node in cfg.model.graph.nodes():
+    print(f"Node address: {hex(node.addr)}\tNode size: {node.size}")
+
+print("\nEdges:")
+for src, dest, data in cfg.model.graph.edges(data=True):
+    print(f"{hex(src.addr)} -> {hex(dest.addr)} ({data})")
+```
+
+Which provides us the output:
+
+```
+Graph Type: DiGraph with 36 nodes and 36 edges
+
+Nodes:
+Node address: 0x401040  Node size: 33
+Node address: 0x401000  Node size: 16
+Node address: 0x401070  Node size: 19
+Node address: 0x4010a0  Node size: 36
+Node address: 0x4010e0  Node size: 13
+Node address: 0x401120  Node size: 9
+Node address: 0x401129  Node size: 36
+[...]
+
+Edges:
+0x401040 -> 0x500000 ({'jumpkind': 'Ijk_Call', 'ins_addr': 4198491, 'stmt_idx': -2})
+0x401000 -> 0x401012 ({'jumpkind': 'Ijk_Boring', 'ins_addr': 4198414, 'stmt_idx': 21})
+0x401000 -> 0x401010 ({'jumpkind': 'Ijk_Boring', 'ins_addr': 4198414, 'stmt_idx': -2})
+0x401070 -> 0x401098 ({'jumpkind': 'Ijk_Boring', 'ins_addr': 4198529, 'stmt_idx': 19})
+0x401070 -> 0x401083 ({'jumpkind': 'Ijk_Boring', 'ins_addr': 4198529, 'stmt_idx': -2})
+0x4010a0 -> 0x4010d8 ({'jumpkind': 'Ijk_Boring', 'ins_addr': 4198594, 'stmt_idx': 44})
+[...]
+
+```
 #pagebreak()
 
 = Machine Learning

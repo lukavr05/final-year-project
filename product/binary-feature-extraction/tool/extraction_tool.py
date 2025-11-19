@@ -1,13 +1,17 @@
 import lief
 import numpy as np
+import angr
 from capstone import *
 
+
 def getTextfromBinary(path):
+
     binary = lief.parse(path)
 
     text_section = binary.get_section(".text")
 
     return bytes(text_section.content)
+
 
 def getInstructionCounts(code: bytes):
  
@@ -43,6 +47,7 @@ def getInstructionFrequencies(counts):
 
     print(freqs)
 
+
 def getNGrams(code: bytes, n):
     md = Cs(CS_ARCH_X86, CS_MODE_64)
     instructions = []
@@ -58,5 +63,24 @@ def getNGrams(code: bytes, n):
     
     return ngrams
 
-code = getTextfromBinary("../examples/example1")
-print(getNGrams(code, 3))
+
+def getNGramCounts(ngrams):
+    ngram_counts = {}
+
+    for n in ngrams:
+        if n in ngram_counts:
+            ngram_counts[n] += 1
+        else:
+            ngram_counts[n] = 1
+
+    return ngram_counts
+
+
+def getControlFlowGraph(path):
+    binary = angr.Project(path, load_options={"auto_load_libs": False})
+
+    cfg = binary.analyses.CFGFast()
+    
+    return cfg
+
+
