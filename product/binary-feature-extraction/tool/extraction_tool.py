@@ -76,11 +76,15 @@ def getNGramCounts(ngrams):
     return ngram_counts
 
 
-def getControlFlowGraph(path):
+def getCFG(path):
     binary = angr.Project(path, load_options={"auto_load_libs": False})
 
     cfg = binary.analyses.CFGFast()
     
     return cfg
 
+def getCFGFeatures(cfg):
+    g = cfg.model.graph
 
+    num_nodes = len(g.nodes())
+    num_edges = len(g.edges())

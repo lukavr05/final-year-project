@@ -1,4 +1,6 @@
 import angr
+import numpy as np
+import networkx as nx
 
 def getControlFlowGraph(path):
     binary = angr.Project(path, load_options={"auto_load_libs": False})
@@ -7,14 +9,18 @@ def getControlFlowGraph(path):
     
     return cfg
 
+def getCFGFeatures(cfg):
+    g = cfg.model.graph
+
+    num_nodes = len(g.nodes())
+    num_edges = len(g.edges())
+
+    density = nx.density(cfg.model)
+    cycles = nx.cycle_basis(cfg.model)
+    cyclomatic = len(cycles)
+
+    return np.array([num_edges, num_nodes, density, cyclomatic])
 
 cfg = getControlFlowGraph("../examples/example1")
 
-print("Graph Type:", cfg.model.graph)
-print("\nNodes:")
-for node in cfg.model.graph.nodes():
-    print(f"Node address: {hex(node.addr)}\tNode size: {node.size}")
-
-print("\nEdges:")
-for src, dest, data in cfg.model.graph.edges(data=True):
-    print(f"{hex(src.addr)} -> {hex(dest.addr)} ({data})")
+print(getCFGFeatures(cfg))

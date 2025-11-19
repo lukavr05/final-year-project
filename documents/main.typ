@@ -636,9 +636,26 @@ Edges:
 0x401070 -> 0x401083 ({'jumpkind': 'Ijk_Boring', 'ins_addr': 4198529, 'stmt_idx': -2})
 0x4010a0 -> 0x4010d8 ({'jumpkind': 'Ijk_Boring', 'ins_addr': 4198594, 'stmt_idx': 44})
 [...]
-
 ```
+
+=== Extracting Features from the Control Flow Graph
+
+Now we have our CFG available for analysis, we can begin to extract some features that will be useful for machine learning applications. The simplest features to be extracted are the number of nodes and edges, calculated by:
+```py
+g = cfg.model.graph
+
+num_nodes = len(g.nodes())
+num_edges = len(g.edges())
+```
+
+So far, this is quite trivial. An important feature of the `angr` modules is that they are compatible with `networkx`, a very useful model in graph analysis @hagberg2008. We can use some features of this module to get some more values out, such as the graph density (the ratio between the actual edges and the maximum number of edges possible) and cyclomatic complexity (a measure of the complexity of a graph). We can extract these using the following:
+
+
+
+
+
 #pagebreak()
+
 
 = Machine Learning
 #pagebreak() 
