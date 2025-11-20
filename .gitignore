@@ -1,2 +1,3 @@
 .venv
-**/dataset/gcj2020.csv
+**/dataset-generation/gcj2020.csv
+**/machine-learning/dataset-generation/scripts/test/
