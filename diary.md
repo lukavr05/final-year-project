@@ -1,5 +1,13 @@
 # My Project Diary
 
+## Entry 17 - 21/11/2025
+
+Finished tool for extracting binaries from the CFG. Pausing development of new tools for now, focusing on formatting all my work for the interim report.
+
+## Entry 16 - 20/11/2025
+
+Began work on Machine Learning aspect of the project, as this will be useful going into Term 2. Researched datasets that contain author AND binary files, however all that I found was a CSV file from the Google Code Jam competition. This meant I had to create a tool to extract the source code from the file, as well as create binaries from the extracted source code.
+
 ## Entry 15 - 19/11/2025
 
 Paused work on the n-grams, instead working on extracting CFG. Very complicated to implement by hand and my solution will likely be inefficient/slow, so opting to use pre-existing libraries. Managed to do some basic CFG extraction and planning to normalise some features from it.

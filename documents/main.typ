@@ -110,13 +110,13 @@
 
 
 // === MAIN CONTENT STARTS HERE ===
+
+= Introduction to the Project
+
+The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps @rosenblum2011. Moreover, the issue has applications in both malware forensics @alrabee2014 and threat detection, as it allows us to automatically identify and categorise malicious code authors @kalgutkar2019. This project explores predicting authorship by extracting and analysing features from compiled code and training machine learning models to interpret these features, assessing whether extracted features correspond to known malicious code or authors. The early objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. The ultimate goal of the project is to evaluate whether distinctive patterns and features in compiled binaries can be analysed for reliable authorship attribution via machine learning methods. In doing so, we can potentially apply this attribution to determine whether the features of the binary are indicative of malicious code or known malicious authors.
+#pagebreak()
+
 /*
-= Preliminary Project Plan
-
-== Abstract
-
-The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps @rosenblum2011. Moreover, the issue has applications in both malware forensics @alrabee2014 and threat detection, as it allows us to automatically identify and categorise malicious code authors @kalgutkar2019. This project explores predicting authorship by extracting and analysing features from compiled code and training machine learning models to interpret these features, assessing whether extracted features correspond to known malicious code or authors. The early objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. The ultimate goal of the project is to evaluate whether distinctive patterns and features in compiled binaries can be analysed for reliable authorship attribution via machine learning methods. In doing so, we can determine whether the features of the binary are indicative of malicious code or known malicious authors.
-
 == Timeline
 
 Before I begin coding, I plan to research the theory behind author attribution in the context of programming. This research will be collated into a brief report on *Author Attribution*, to define the different techniques on identifying a code author given their code, that will be included in the main project report. In essence, the practical side of the project will initially focus on the binary analysis and feature extraction aspect. I intend to research and produce prototypes of tool(s) that will be able to extract meaningful data from binary files that can be used by a machine learning algorithm. Following this, I will produce a *Binary Analysis and Feature Extraction Report*, documenting both my research and implementation process, as well as the key concepts and techniques applied.
@@ -486,7 +486,7 @@ This output is far more reasonable in terms of instruction counts for such a sim
 
 === Normalising Instruction Counts
 
-The next logical step is to normalise the instruction counts, as some longer binaries may have higher counts of instructios overall, we care about the relative *frequencies* (or ratios) of these instructions. As well as this, some binary files may contain a wider array of instructions, which could skew data if we dynamically inspect the instruction counts. This requires special attention, and for the purposes of the project we will focus on the main instructions that are most common and will lead to more accurate authorship attribution. 
+The next logical step is to normalise the instruction counts, as some longer binaries may have higher counts of instructions overall, we care about the relative *frequencies* (or ratios) of these instructions. As well as this, some binary files may contain a wider array of instructions, which could skew data if we dynamically inspect the instruction counts. This requires special attention, and for the purposes of the project we will focus on the main instructions that are most common and will lead to more accurate authorship attribution. 
 
 Through the research of Caliskan-Islam et al. @caliskan2015 and Rosenblum et al. @rosenblum2011, they determined instructions that pertain to control flow (`jmp`, `call`, `ret`, `cmp`), memory control (`mov`, `push`, `pop`) and arithmetic (`add`, `sub`) can be used to indicate authorship. The ratios of these will be considered and added as part of the *feature set* of the machine learning aspect.
 
@@ -519,7 +519,7 @@ Performing this on `example1` produces the output:
 [0.03703704 0.0617284  0.0617284  0.03703704 0.25925926 0.04938272 0.02469136 0.02469136 0.02469136]
 ```
 
-Which is a `numpy` array of type `float`, containing the frequencies neatly formatted as `numpy` and `sklearn` are extremely compatible. 
+Which is a `numpy` array of type `float`, containing the frequencies neatly formatted, as `numpy` and `sklearn` are extremely compatible. 
 
 If we run the program on the ELF files `example1`, `example2` and `example3` (found in the `product/binary-feature-extraction/examples` directory), we can visualise the distribution of the relevant instructions.
 
@@ -822,10 +822,10 @@ Meaning we have successfully extracted the C++ files and placed them in director
 
 === Compiling the Source Code
 
-The next step in generating our dataset of binary files is to take this source code and compile it into ELF format. Before we can implement this into our current generation script, we need to create a function that can automatically compile C++ source code into ELF binaries. So far in the project, we have based the compilation on pure C, using the `gcc` compiler. Because we are now dealing with C++, we have to use the C++-enabled version of the `gcc` compiler: `g++`. We can use the `subprocess` library to enable us to run commands dynamically (after giving the file `rwx` permissions).
+The next step in generating our dataset of binary files is to take this source code and compile it into ELF format. Before we can implement this into our current generation script, we need to create a function that can automatically compile C++ source code into ELF binaries. So far in the project, we have based the compilation on pure C, using the `gcc` compiler. Because we are now dealing with C++, we have to use the C++-enabled version of the `gcc` compiler: `g++`. The `-O2` flag specifies compiler optimisations @gccdocs, with `-O2` speeding up compilation enough to feasibly compile all the binaries in the dataset in a reasonablre timeframe whilst preserving enough of the source binary information. We can use the `subprocess` library to enable us to run commands dynamically (after giving the file `rwx` permissions).
 
 ```py
-def compile_source(src_path, bin_path):
+def compileSourceCode(src_path, bin_path):
     try:
         cmd = ["g++", "-O2", "-o", str(bin_path), str(src_path)]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=20)
@@ -842,7 +842,95 @@ def compile_source(src_path, bin_path):
         return False
 ```
 
-By capturing the output of the subprocess, we can determine whether the file successfully compiled or not, and capture any relevant output (to return the error message). In the final tool, we can use these outputs and store them in `.log` files, to keep track of 
+By capturing the output of the subprocess, we can determine whether the file successfully compiled or not, and capture any relevant output (to return the error message). Additionally, we want to ensure that the program does not get stuck in an infinte loop, so we account for timeout errors as well. In the final tool, we can use these outputs and store them in `.log` files, to keep track of what is happening.
+
+=== The Final Tool
+
+Given all the components discussed above, we can now combine them all to create a single script that parses the entire CSV file, extracts the source code (organising by user), and compiles it to provide a set of binary files. Once we have all of our binary files, we can build a dataset.
+
+First, we must set up the environment, importing all necessary modules, setting some important variables and defining the paths of the files to be used.
+
+```py
+import csv
+import subprocess
+import time
+from pathlib import Path
+
+CSV_PATH = "../gcj2020.csv"                  
+OUTPUT_SRC_DIR = Path("dataset/src")
+OUTPUT_BIN_DIR = Path("dataset/bin")
+COMPILER = "g++"
+COMP_FLAGS = ["-O2"]
+
+OUTPUT_SRC_DIR.mkdir(parents=True, exist_ok=True)
+OUTPUT_BIN_DIR.mkdir(parents=True, exist_ok=True)
+
+success_log = open("compile_success.log", "w")
+fail_log = open("compile_fail.log", "w")
+```
+
+Now, we modify our `compile_source` function to write to the log files rather than just printing to the command line. 
+
+```py
+def compileSourceCode(src_path: Path, bin_path: Path):
+    try:
+        cmd = [COMPILER, *COMP_FLAGS, "-o", str(bin_path), str(src_path)]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=20)
+
+        if result.returncode != 0:
+            fail_log.write(f"[FAIL] {src_path} → {result.stderr}\n")
+            return False
+
+        success_log.write(f"[OK] {src_path}\n")
+        return True
+
+    except subprocess.TimeoutExpired:
+        fail_log.write(f"[TIMEOUT] {src_path}\n")
+        return False
+```
+
+With that, we can move on to our CSV parsing, where we will write the new C++ file and compile it together, storing the binaries in the same format (with a directory for each user).
+
+```py
+def parseCSV():
+    print("Starting CSV Parsing & Compilation...")
+
+    with open(CSV_PATH, newline='', encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile)
+
+        for i, row in enumerate(reader):
+
+            # only taking the first 50 for testing
+            print(f"{int((i / 50) * 100)}% Complete", end="\r")
+            if i == 50:
+                print("")
+                break
+
+            username = row['username']
+            file_id = row['file']
+            source_code = row['flines']
+            file_name = row['full_path']
+
+            out_dir = OUTPUT_SRC_DIR / username
+            out_dir.mkdir(parents=True, exist_ok=True)
+
+            if file_name.lower().endswith(".cpp"):
+                ext = ".cpp"
+            else:
+                ext = ".txt"  # default fallback
+
+            src_path = out_dir / f"{file_id}{ext}"
+
+            with open(src_path, "w", encoding="utf-8") as f:
+                f.write(source_code)
+
+            bin_out_dir = OUTPUT_BIN_DIR / username
+            bin_out_dir.mkdir(parents=True, exist_ok=True)
+            bin_path = bin_out_dir / f"{file_id}.bin"
+
+            compile_source(src_path, bin_path)
+```
+
 
 #pagebreak() 
 #bibliography("references.bib")
