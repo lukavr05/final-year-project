@@ -9,7 +9,7 @@ OUTPUT_DIR = Path("test/bin/Benq/")
 
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-def compileSource(src_path, bin_path):
+def compileSourceCode(src_path, bin_path):
     try:
         cmd = ["g++", "-o", str(bin_path), str(src_path)]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=20)
@@ -23,4 +23,4 @@ def compileSource(src_path, bin_path):
     except subprocess.TimeoutExpired:
         print("FAILED: Timed out")
 
-compileSource(SOURCE_DIR, OUTPUT_DIR)
+compileSourceCode(SOURCE_DIR, OUTPUT_DIR)
