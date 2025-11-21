@@ -1,3 +1,6 @@
 .venv
 **/dataset-generation/gcj2020.csv
 **/machine-learning/dataset-generation/scripts/test/
+**/machine-learning/dataset-generation/tool/dataset/
+**/machine-learning/dataset-generation/tool/compile_fail.log
+**/machine-learning/dataset-generation/tool/compile_success.log

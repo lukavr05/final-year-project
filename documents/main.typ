@@ -753,7 +753,96 @@ typedef vector<int> vi;
 
 === Extracting the Source Code
 
-The dataset generation will first, in a `src/` directory, parse the source code. Each author will have a seperate directory which will be named after their username and contain all code they have completed.
+The dataset generation will first, in a `src/` directory, parse the source code. Each author will have a seperate directory which will be named after their username and contain all code they have completed. The following code uses the code above to create the src directory and dynamically create the username directory to store all the code.
+
+```py
+def parseCSV(path):
+
+    # The output directory
+    OUTPUT_DIR =  Path("test/src")
+
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    [...]
+
+    out_dir = OUTPUT_DIR / username
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    if file_name.lower().endswith(".cpp"):
+        ext = ".cpp"
+    else:
+        ext = ".txt" # default
+
+    new_file_name = file_id + ext
+    src_path = out_dir / new_file_name
+
+    with open(src_path, "w", encoding="utf-8") as f:
+        f.write(source_code)
+
+```
+
+The function specifies an absolute output directory, `OUTPUT_DIR`, which is where all the newly generated directories will go. The flags `parents` and `exist_ok` ensure that we can create parent directories and avoid any issues if the directory already exists (such as the case when an author has multiple solutions). The code then checks the file extension so that it can create the correct file when adding it to the directory. When we run this code, we can see it correctly creates the new directories and the file, which contains the entire source code.
+```
+.
+└── src
+    └── xiaowuc1
+        └── 0000000000214847.cpp
+```
+
+If we run the code on a larger subset (of size 20) of the dataset we get the following file structure:
+
+```
+  src
+    ├── Benq
+    │   ├── 0000000000210bf5.cpp
+    │   ├── 0000000000210d90.cpp
+    │   ├── 0000000000211175.cpp
+    │   ├── 0000000000213183.cpp
+    │   ├── 0000000000216261.cpp
+    │   └── 0000000000216a0b.cpp
+    ├── cki86201
+    │   ├── 0000000000210a72.cpp
+    │   ├── 0000000000210b57.cpp
+    │   ├── 0000000000210efb.cpp
+    │   ├── 0000000000212170.cpp
+    │   ├── 0000000000213ed5.cpp
+    │   ├── 0000000000214554.cpp
+    │   └── 0000000000215114.cpp
+    ├── Golovanov399
+    │   ├── 0000000000217a48.cpp
+    │   └── 0000000000217a6a.cpp
+    └── xiaowuc1
+        ├── 0000000000210be4.cpp
+        ├── 0000000000210dfc.cpp
+        ├── 0000000000211171.cpp
+        ├── 000000000021301e.cpp
+        └── 0000000000214847.cpp
+```
+Meaning we have successfully extracted the C++ files and placed them in directories for their respective authors.
+
+=== Compiling the Source Code
+
+The next step in generating our dataset of binary files is to take this source code and compile it into ELF format. Before we can implement this into our current generation script, we need to create a function that can automatically compile C++ source code into ELF binaries. So far in the project, we have based the compilation on pure C, using the `gcc` compiler. Because we are now dealing with C++, we have to use the C++-enabled version of the `gcc` compiler: `g++`. We can use the `subprocess` library to enable us to run commands dynamically (after giving the file `rwx` permissions).
+
+```py
+def compile_source(src_path, bin_path):
+    try:
+        cmd = ["g++", "-O2", "-o", str(bin_path), str(src_path)]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=20)
+
+        if result.returncode != 0:
+            print(f"FAILED at {src_path} -> {result.stderr}\n")
+            return False
+
+        print(f"SUCCESS: {src_path}\n")
+        return True
+
+    except subprocess.TimeoutExpired:
+        print(f"TIMEOUT: {src_path}\n")
+        return False
+```
+
+By capturing the output of the subprocess, we can determine whether the file successfully compiled or not, and capture any relevant output (to return the error message). In the final tool, we can use these outputs and store them in `.log` files, to keep track of 
 
 #pagebreak() 
 #bibliography("references.bib")
