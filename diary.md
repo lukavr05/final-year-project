@@ -1,5 +1,45 @@
 # My Project Diary
 
+## Entry 17 - 21/11/2025
+
+Finished tool for extracting binaries from the CFG. Pausing development of new tools for now, focusing on formatting all my work for the interim report.
+
+## Entry 16 - 20/11/2025
+
+Began work on Machine Learning aspect of the project, as this will be useful going into Term 2. Researched datasets that contain author AND binary files, however all that I found was a CSV file from the Google Code Jam competition. This meant I had to create a tool to extract the source code from the file, as well as create binaries from the extracted source code.
+
+## Entry 15 - 19/11/2025
+
+Paused work on the n-grams, instead working on extracting CFG. Very complicated to implement by hand and my solution will likely be inefficient/slow, so opting to use pre-existing libraries. Managed to do some basic CFG extraction and planning to normalise some features from it.
+
+## Entry 14 - 17/11/2025
+
+Started to implement the n-gram extraction. This is because of its simplicity. While I was able to implement it, I hit a roadblock when trying to normalise the data as I require a whole dataset to do this. I intend to use the sklearn module to do TF-IDF, but this can only be done in conjunction with the machine learning experiments.
+
+## Entry 13 - 12/11/2025
+
+Successfully implemented the instruction frequency part of the the extraction tool. Put the results in a jupyter notebook so that I can analyse and visualise the results when running on some examples. 
+
+## Entry 12 - 10/11/2025
+
+Added some more binary examples, modified some old scripts and implemented successful extraction of the .text section of the binary file. This allowed me to begin working on the instruction counts/frequency without worrying about compiler noise.
+
+## Entry 11 - 06/11/2025
+
+Changed binary examples from Windows .exe files to Linux ELF, as this reduces compiler overhead and have more accessible extraction libraries available.
+
+## Entry 10 - 04/11/2025
+
+Added extraction scripts to get the basic information from a binary file. Encountered some issues when it came to massive instruction sets for basic programs.
+
+## Entry 9 - 29/10/2025
+
+Started basic research into binary feature extraction. Set up some basic experiments on a new branch to ensure that changes can be reverted easily.
+
+## Entry 8 - 27/10/2025
+
+Completed the author attribution report, complete with conclusion and merged into the main branch.
+
 ## Entry 7 - 21/10/2025
 
 Conducted additional research into code author analysis metrics. Polished off attribution objectives section with a conclusion. Mostly finished analysis metrics section.

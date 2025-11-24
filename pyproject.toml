@@ -1,0 +1,12 @@
+[project]
+name = "author-attribution-ml"
+version = "0.0.1"
+requires-python = ">= 3.11"
+dependencies = [
+    "lief",
+    "numpy",
+    "pathlib",
+    "tqdm",
+    "capstone",
+    "angr",
+]
