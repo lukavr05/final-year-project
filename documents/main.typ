@@ -354,9 +354,6 @@ x01\x00\x00\x00@\x10\x00\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00`6
 \x00\x00\x00\x00\x18\x03\x00\x00\x00\x00\x00\x00\x1c
 \x00\x00\x00\x00\x00\x00\x00\x1c\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00
 \x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00
-\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00
-\xe0\x05\x00\x00\x00\x00\x00\x00\xe0\x05\x00\x00\x00\x00\x00
-
 [...]
 ```
 === Using The `capstone` Framework
@@ -688,9 +685,9 @@ Most of these features are slightly ambiguous in terms of their naming, but the 
   columns: 3,
   align: left,
   table.header([*Column*], [*Description*], [*Example*]),
-  [`file`], [A unique file ID/index], [`0` (for the first file)],
-  [`full_path`], [The full source code of the file itself], [`cout << "Hello, world!"`],
-  [`solution`], [The name and type of the file], [`0000000000214847.CPP`],
+  [`file`], [The file index], [`0` (for the first file)],
+  [`full_path`], [The name and type of the file], [`0000000000214847.CPP`],
+  [`solution`], [The full source code of the file itself], [`cout << "Hello, world!"`],
   [`username`], [The username of the code author], [`author123`],
 )
 #set align(left)
@@ -716,7 +713,6 @@ def parseCSV(path):
         file_name = row['full_path']
 
     print(f"Username: {username}\nFile ID: {file_id}\nFile Name: {file_name}\nSource Code: {source_code}")
-
 ```
 
 Which correctly provides us with the output:
@@ -899,7 +895,6 @@ def parseCSV():
         reader = csv.DictReader(csvfile)
 
         for i, row in enumerate(reader):
-
             # only taking the first 50 for testing
             print(f"{int((i / 50) * 100)}% Complete", end="\r")
             if i == 50:
@@ -931,6 +926,46 @@ def parseCSV():
             compile_source(src_path, bin_path)
 ```
 
+== Appendix
+
+=== Project Structure
+
+*`documents/`* -- Contains all documents and media for the main report, as well as the project plan.
+
+*`product/`* -- Contains all files relating to coding aspects of the project.
+#list(
+    marker: [],
+    [*`binary-feature-extraction/`* -- Files relating to the binary feature aspect of the project.],
+    indent: 0.4cm,
+)
+#list(
+    marker: [],
+    [*`examples/`* -- Contains C source code and compiled ELF files used in testing the binary feature extraction scripts],
+    [*`scripts/`* -- The Python scripts used in testing the binary feature extraction. All scripts are also displayed in the report],
+    [*`tool/`* -- Contains a combination of testing scripts to make a function feature extraction tool],
+    indent: 1cm,
+)
+#list(
+    marker: [],
+    [*`machine-learning/`* -- Contains all files relating to the machine learning aspect of the project.],
+    indent: 0.4cm,
+)
+#list(
+    marker: [],
+    [*`dataset-generation/`* -- Contains all files and directories pertaining to the generation of a dataset for the machine learning model.],
+    indent: 1cm,
+)
+#list(
+    marker: [],
+    [*`scripts/`* -- Testing scripts used in the examples within the report],
+    [*`tool/`* -- Contains a combination of the testing scripts, with a bit of polish, to store a unified script for generating a dataset from the CSV file],
+    indent: 1.6cm,
+)
+#list(
+    marker: [],
+    [*`model/`* -- Contains all code and files pertaining to the machine learning model used for the project.],
+    indent: 1cm,
+)
 
 #pagebreak() 
 #bibliography("references.bib")
