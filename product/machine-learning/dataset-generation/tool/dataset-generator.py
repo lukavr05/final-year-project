@@ -6,6 +6,7 @@ from tqdm import tqdm
 CSV_PATH = "../gcj2020.csv"                  
 OUTPUT_SRC_DIR = Path("dataset/src")
 OUTPUT_BIN_DIR = Path("dataset/bin")
+NUM_FILES = 75
 COMPILER = "g++"
 COMP_FLAGS = ["-O2"]
 
@@ -36,10 +37,11 @@ def parseCSV():
 
     with open(CSV_PATH, newline='', encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
+        success_count = 0
 
-        for i, row in enumerate(tqdm(reader, total=200)):
+        for i, row in enumerate(tqdm(reader, total=NUM_FILES, desc="Files Read")):
 
-            if i == 200:
+            if i == NUM_FILES:
                 break
             # only taking the first 50 for testing
             username = row['username']
@@ -64,7 +66,10 @@ def parseCSV():
             bin_out_dir.mkdir(parents=True, exist_ok=True)
             bin_path = bin_out_dir / f"{file_id}.bin"
 
-            compile_source(src_path, bin_path)
+            if compile_source(src_path, bin_path):
+                success_count += 1
+
+        print(f"Successfully compiled {success_count} of {NUM_FILES} files.")
 
 parseCSV()
 
