@@ -1,6 +1,7 @@
 import csv
 import subprocess
 from pathlib import Path
+from tqdm import tqdm
 
 CSV_PATH = "../gcj2020.csv"                  
 OUTPUT_SRC_DIR = Path("dataset/src")
@@ -36,14 +37,11 @@ def parseCSV():
     with open(CSV_PATH, newline='', encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
 
-        for i, row in enumerate(reader):
+        for i, row in enumerate(tqdm(reader, total=200)):
 
-            # only taking the first 50 for testing
-            print(f"{int((i / 50) * 100)}% Complete", end="\r")
-            if i == 50:
-                print("")
+            if i == 200:
                 break
-
+            # only taking the first 50 for testing
             username = row['username']
             file_id = row['file']
             source_code = row['flines']
