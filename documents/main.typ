@@ -886,7 +886,7 @@ success_log = open("compile_success.log", "w")
 fail_log = open("compile_fail.log", "w")
 ```
 
-Now, we modify our `compile_source` function to write to the log files rather than just printing to the command line. 
+Now, we modify our `compileSourceCode` function to write to the log files rather than just printing to the command line. 
 
 ```py
 def compileSourceCode(src_path: Path, bin_path: Path):
@@ -906,7 +906,7 @@ def compileSourceCode(src_path: Path, bin_path: Path):
         return False
 ```
 
-With that, we can move on to our CSV parsing, where we will write the new C++ file and compile it together, storing the binaries in the same format (with a directory for each user).
+With that, we can move on to our CSV parsing, where we will write the new C++ file and compile it together, storing the binaries in the same format (with a directory for each user). For now, we only take the first 100 entries to create a subset of the actual dataset (which contains over 50,000 files).
 
 ```py
 def parseCSV():
@@ -914,14 +914,13 @@ def parseCSV():
 
     with open(CSV_PATH, newline='', encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
+        success_count = 0
 
-        for i, row in enumerate(reader):
-            # only taking the first 50 for testing
-            print(f"{int((i / 50) * 100)}% Complete", end="\r")
-            if i == 50:
-                print("")
+        for i, row in enumerate(tqdm(reader, total=NUM_FILES, desc="Files Read")):
+
+            if i == NUM_FILES:
                 break
-
+        
             username = row['username']
             file_id = row['file']
             source_code = row['flines']
@@ -944,14 +943,17 @@ def parseCSV():
             bin_out_dir.mkdir(parents=True, exist_ok=True)
             bin_path = bin_out_dir / f"{file_id}.bin"
 
-            compile_source(src_path, bin_path)
+            if compile_source(src_path, bin_path):
+                success_count += 1
+
+        print(f"Successfully compiled {success_count} of {NUM_FILES} files.")
 ```
 
 == Appendix
 
 === Project Structure
 
-*`documents/`* -- Contains all documents and media for the main report, as well as the project plan.
+*`documents/`* -- Contains all documents and media for the main report, including the `main.typ` for report editing, `refernces.bib` containg all BibTeX references, a Jupyter Notebook for testing the binary feature extraction, as well as the project plan.
 
 *`product/`* -- Contains all files relating to coding aspects of the project.
 #list(
@@ -987,6 +989,10 @@ def parseCSV():
     [*`model/`* -- Contains all code and files pertaining to the machine learning model used for the project.],
     indent: 1cm,
 )
+
+=== Summary of Completed Work
+
+
 
 #pagebreak() 
 #bibliography("references.bib")
