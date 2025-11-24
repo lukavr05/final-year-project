@@ -17,6 +17,7 @@
   set document(title: [#title], author: author)
   set text(font:"Nimbus Sans")
   set par(justify: true)
+  set list(indent: 0.6cm)
   show link: underline
   show raw: set text(font: "CaskaydiaCove NF", weight: "regular")
   show raw.where(block: true): set block(inset: 2.5em)
@@ -38,15 +39,13 @@
   // Section-level headings
   show heading.where(level: 2): set text(size: 16pt)
   
-  // === PAGE SETUP ===
+  // === PAGE SETUP ===PROJECT
   // Add a header to all pages except the first one.
   set page(header: context {if counter(page).get().first() > 1 [#report_type #h(1fr) #author]})
 
 
   // === FRONT PAGE ===
   set align(center)
-  
-  
   
   text(22pt, "Final Year Project Report")
   v(3mm)
@@ -111,9 +110,30 @@
 
 // === MAIN CONTENT STARTS HERE ===
 
-= Introduction to the Project
+= Project Overview
+
+== Introduction
 
 The problem of attributing a piece of code, particularly a binary file, to a known author using machine learning is complex and must be decomposed into several logical steps @rosenblum2011. Moreover, the issue has applications in both malware forensics @alrabee2014 and threat detection, as it allows us to automatically identify and categorise malicious code authors @kalgutkar2019. This project explores predicting authorship by extracting and analysing features from compiled code and training machine learning models to interpret these features, assessing whether extracted features correspond to known malicious code or authors. The early objectives include: reviewing existing techniques for binary feature extraction, building a dataset of binaries from multiple authors, implementing and testing preliminary machine learning classifiers on extracted features, and evaluating early test results and refining the approach accordingly. The ultimate goal of the project is to evaluate whether distinctive patterns and features in compiled binaries can be analysed for reliable authorship attribution via machine learning methods. In doing so, we can potentially apply this attribution to determine whether the features of the binary are indicative of malicious code or known malicious authors.
+
+== Aims and Objectives
+
+Though the ultimate goal of the project is to predict authorship of binary files, this can be decomposed into two distinct sections: a *Binary Feature Extraction* component (see *Chapter 3*), and a *Machine Learning* component (see *Chapter 4*). Each section contributes equally to the final outcome of the project, but each has its own distinct set of goals. First, for the feature extraction component, we require:
+
+#list(
+    [A tool to statically extract _meaningful_ features from a binary file in either ELF or `.bin` format. The features should be determined according to their feasibility and compatibility with machine learning algorithms],
+    [A tool to normalise these features in a way that can be easily interpreted for machine learning],
+    [A report outlining the underlying theory and motivations of binary feature extraction, evaluating the methods and challenges]
+)
+
+And for the machine learning aspect, we require:
+
+#list(
+    [A tool to extract and format a dataset from publicly available datasets. The tool should use the binary feature extraction tool to get features and include the author as the label],
+    [A machine learning model that, given a dataset and a list of features, can accurately predict authorship using regression models],
+    [A report describing the theory that underpins the machine learning methods implemented, evaluating different models and comparing their performance],
+)
+
 #pagebreak()
 
 /*
@@ -849,12 +869,13 @@ First, we must set up the environment, importing all necessary modules, setting 
 ```py
 import csv
 import subprocess
-import time
 from pathlib import Path
+from tqdm import tqdm
 
 CSV_PATH = "../gcj2020.csv"                  
 OUTPUT_SRC_DIR = Path("dataset/src")
 OUTPUT_BIN_DIR = Path("dataset/bin")
+NUM_FILES = 75
 COMPILER = "g++"
 COMP_FLAGS = ["-O2"]
 
