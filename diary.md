@@ -1,5 +1,11 @@
 # My Project Diary
 
+## Entry 18 - 24/11/2025
+
+Added a progress bar to the dataset generation tool. This decision came as I wanted to see how fast it runs. However, I noticed it ran very slow so decided to migrate the project from using `pip` to `uv`, a faster package manager. This led to minor improvements, but I beieve the limitation lies in my laptop hardware.
+
+Added sections to my report that are required for the interim report.
+
 ## Entry 17 - 21/11/2025
 
 Finished tool for extracting binaries from the CFG. Pausing development of new tools for now, focusing on formatting all my work for the interim report.
