@@ -1,6 +1,6 @@
 import pandas as pd
 import subprocess
-import warnings
+import logging
 from pathlib import Path
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -9,10 +9,11 @@ from extraction_tool import *
 CSV_PATH = "../gcj2020.csv"
 OUTPUT_SRC_DIR = Path("dataset/src")
 OUTPUT_BIN_DIR = Path("dataset/bin")
+OUTPUT_DATA_DIR = Path("../../model")
 OUTPUT_FILE = "binary-features.txt"
 
-NUM_FILES = 200
-CHUNK_SIZE = 50
+NUM_FILES = 1000
+CHUNK_SIZE = 100
 COMPILER = "g++"
 COMP_FLAGS = ["-O2"]
 NUM_WORKERS = 8
@@ -166,13 +167,13 @@ def parseCSV():
 
 
 def build_dataset():
-    warnings.filterwarnings('ignore')
+    logging.getLogger("cle.loader").setLevel(logging.ERROR)
     parseCSV()
     print("Beginning dataset assembly...")
     users = sorted([d.name for d in OUTPUT_BIN_DIR.iterdir() if d.is_dir()])
     user_to_label = {user: i for i, user in enumerate(users)}
 
-    with open(OUTPUT_FILE, "w") as f:
+    with open(OUTPUT_DATA_DIR / OUTPUT_FILE, "w") as f:
         print("Extracting features from binary files")
         f.write(",".join(HEADER) + "\n")
 

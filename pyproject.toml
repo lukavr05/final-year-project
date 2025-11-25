@@ -10,4 +10,5 @@ dependencies = [
     "capstone",
     "pandas",
     "angr>=9.2.184",
+    "scikit-learn",
 ]
