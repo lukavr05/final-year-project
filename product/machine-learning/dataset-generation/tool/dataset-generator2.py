@@ -3,7 +3,7 @@ import subprocess
 from pathlib import Path
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from collections import defaultdict
+from extraction_tool import getTextfromBinary, getInstructionFrequencies
 
 CSV_PATH = "../gcj2020.csv"
 OUTPUT_SRC_DIR = Path("dataset/src")
@@ -58,7 +58,7 @@ def process_file(args):
 
 def precompute_directories():
     """Read CSV and precompute all unique user directories."""
-    
+
     print("Precomputing directories...")
     unique_users = set()
     
