@@ -1,18 +1,27 @@
 import pandas as pd
 import subprocess
+import warnings
 from pathlib import Path
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, as_completed
-# from extraction_tool import getTextfromBinary, getInstructionFrequencies
+from extraction_tool import *
 
 CSV_PATH = "../gcj2020.csv"
 OUTPUT_SRC_DIR = Path("dataset/src")
 OUTPUT_BIN_DIR = Path("dataset/bin")
-NUM_FILES = 500
-CHUNK_SIZE = 100
+OUTPUT_FILE = "binary-features.txt"
+
+NUM_FILES = 200
+CHUNK_SIZE = 50
 COMPILER = "g++"
 COMP_FLAGS = ["-O2"]
 NUM_WORKERS = 8
+
+HEADER = [
+    "jmp","call","ret","cmp","mov","push","pop","add","sub",
+    "cfg_nodes","cfg_edges",
+    "label"
+]
 
 OUTPUT_SRC_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_BIN_DIR.mkdir(parents=True, exist_ok=True)
@@ -155,4 +164,39 @@ def parseCSV():
         success_log.close()
         fail_log.close()
 
-parseCSV()
+
+def build_dataset():
+    warnings.filterwarnings('ignore')
+    parseCSV()
+    print("Beginning dataset assembly...")
+    users = sorted([d.name for d in OUTPUT_BIN_DIR.iterdir() if d.is_dir()])
+    user_to_label = {user: i for i, user in enumerate(users)}
+
+    with open(OUTPUT_FILE, "w") as f:
+        print("Extracting features from binary files")
+        f.write(",".join(HEADER) + "\n")
+
+        for user in tqdm(users, total=len(users), desc="Processing", unit="file"):
+            user_dir = OUTPUT_BIN_DIR / user
+            label = user_to_label[user]
+
+
+            for bin_file in user_dir.iterdir():
+                if not bin_file.name.endswith(".bin"):
+                    continue
+
+                try:
+                    features = extractBinaryFeatures(str(bin_file))
+                except Exception as e:
+                    print(f"[WARN] Failed to extract from {bin_file}: {e}")
+                    continue
+
+                full_row = np.append(features, label)
+
+                row_str = ",".join(str(v) for v in full_row)
+
+                f.write(row_str + "\n")
+
+    print(f"\nDataset written to {OUTPUT_FILE}") 
+
+build_dataset()
