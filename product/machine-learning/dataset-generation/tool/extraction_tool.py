@@ -92,7 +92,7 @@ def getCFGFeatures(path):
     num_nodes = len(g.nodes())
     num_edges = len(g.edges())
 
-    return np.array([num_nodes, num_edges])
+    return np.array([num_nodes, num_edges], dtype=float)
 
 def extractBinaryFeatures(path):
     print("Getting text from binary...")
@@ -102,7 +102,6 @@ def extractBinaryFeatures(path):
     instr_freqs = getInstructionFrequencies(text)
     cfg_feats = getCFGFeatures(path)
 
-    return np.concat(instr_freqs, cfg_feats)
+    return np.concatenate((instr_freqs, cfg_feats))
 
-print(extractBinaryFeatures("/dataset/bin/Toby/000000000021b236.bin"))
-
+print(extractBinaryFeatures("./dataset/bin/Benq/0000000000210bf5.bin"))

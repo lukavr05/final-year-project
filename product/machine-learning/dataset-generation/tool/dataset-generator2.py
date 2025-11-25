@@ -3,7 +3,7 @@ import subprocess
 from pathlib import Path
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from extraction_tool import getTextfromBinary, getInstructionFrequencies
+# from extraction_tool import getTextfromBinary, getInstructionFrequencies
 
 CSV_PATH = "../gcj2020.csv"
 OUTPUT_SRC_DIR = Path("dataset/src")
