@@ -11,15 +11,15 @@
   date: none,
   location: "Egham",
   references: "references.yml", // Note: This file needs to exist.
-  body 
+  body,
 ) = {
   // === DOCUMENT SETUP ===
   set document(title: [#title], author: author)
-  set text(font:"Nimbus Sans")
+  set text(font: "Nimbus Sans L")
   set par(justify: true)
   set list(indent: 0.6cm)
   show link: underline
-  show raw: set text(font: "CaskaydiaCove NF", weight: "regular")
+  show raw: set text(font: "CaskaydiaMono NFM", weight: "regular")
   show raw.where(block: true): set block(inset: 2.5em)
 
 
@@ -38,15 +38,15 @@
 
   // Section-level headings
   show heading.where(level: 2): set text(size: 16pt)
-  
+
   // === PAGE SETUP ===PROJECT
   // Add a header to all pages except the first one.
-  set page(header: context {if counter(page).get().first() > 1 [#report_type #h(1fr) #author]})
+  set page(header: context { if counter(page).get().first() > 1 [#report_type #h(1fr) #author] })
 
 
   // === FRONT PAGE ===
   set align(center)
-  
+
   text(22pt, "Final Year Project Report")
   v(3mm)
   line(length: 100%)
@@ -68,7 +68,7 @@
   block(height: 25%, image("media/rhul.jpg", height: 75%))
   text(14pt)[Department of Information Security#linebreak()Royal Holloway, University of London]
   v(15mm)
-  
+
   text(12pt)[#date]
 
   pagebreak()
@@ -76,7 +76,7 @@
   // === TABLE OF CONTENTS ===
   set align(left)
   set heading(numbering: "1.1")
-  
+
   outline(indent: 2em, title: "Contents")
 
   pagebreak()
@@ -103,7 +103,7 @@
   course_name: "BSc Computer Science (Information Security)",
   supervisor: "Dr. Rachel Player",
   date: "October 2025",
-  references: "references.yml" // Specify bibliography file here
+  references: "references.yml", // Specify bibliography file here
 )
 
 
@@ -121,17 +121,17 @@ The problem of attributing a piece of code, particularly a binary file, to a kno
 Though the ultimate goal of the project is to predict authorship of binary files, this can be decomposed into two distinct sections: a *Binary Feature Extraction* component (see *Chapter 3*), and a *Machine Learning* component (see *Chapter 4*). Each section contributes equally to the final outcome of the project, but each has its own distinct set of goals. First, for the feature extraction component, we require:
 
 #list(
-    [A tool to statically extract _meaningful_ features from a binary file in either ELF or `.bin` format. The features should be determined according to their feasibility and compatibility with machine learning algorithms],
-    [A tool to normalise these features in a way that can be easily interpreted for machine learning],
-    [A report outlining the underlying theory and motivations of binary feature extraction, evaluating the methods and challenges]
+  [A tool to statically extract _meaningful_ features from a binary file in either ELF or `.bin` format. The features should be determined according to their feasibility and compatibility with machine learning algorithms],
+  [A tool to normalise these features in a way that can be easily interpreted for machine learning],
+  [A report outlining the underlying theory and motivations of binary feature extraction, evaluating the methods and challenges],
 )
 
 And for the machine learning aspect, we require:
 
 #list(
-    [A tool to extract and format a dataset from publicly available datasets. The tool should use the binary feature extraction tool to get features and include the author as the label],
-    [A machine learning model that, given a dataset and a list of features, can accurately predict authorship using regression models],
-    [A report describing the theory that underpins the machine learning methods implemented, evaluating different models and comparing their performance],
+  [A tool to extract and format a dataset from publicly available datasets. The tool should use the binary feature extraction tool to get features and include the author as the label],
+  [A machine learning model that, given a dataset and a list of features, can accurately predict authorship using regression models],
+  [A report describing the theory that underpins the machine learning methods implemented, evaluating different models and comparing their performance],
 )
 
 #pagebreak()
@@ -150,7 +150,7 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
 #align(end, "See next page for the in-depth first term timeline.")
 #pagebreak()
 *Weeks 1-2* (_September 29#super[th] - October 10#super[th]_)
-#line(length: 100%, stroke: 0.5pt) 
+#line(length: 100%, stroke: 0.5pt)
 - Review recommended literature, particularly pertaining to binary feature abstraction, as this will enforce early prototypes of feature extraction tools
 - Explore supplementary readings using Google scholar to find academic literature on binary feature extraction and control graphs @theiling2000
 *Deliverables:*
@@ -194,7 +194,7 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
 #line(length: 100%, stroke: 0.5pt)
 - Refine model further using evaluation from previous week
 - Begin training and using external datasets to determine efficacy on untrained datasets
-- Develop interim report further, including binary feature extraction and evaluations from previous weeks 
+- Develop interim report further, including binary feature extraction and evaluations from previous weeks
 *Deliverables:*
 - A more refined machine learning algorithm that can measurably produce more accurate results
 - An updated interim report that reflects this development
@@ -218,7 +218,7 @@ Both the *Binary Analysis and Feature Extraction* and *Machine Learning* reports
   [*Technical*], [Scarcity of viable Datasets], [4], [4], [16], [There are not many varied datasets that are easy to acquire, so I will have to manually search for some external binary files with their authors and build on top of minimal datasets.],
   [*Personal*], [Machine Learning and Binary Feature Extraction Overhead], [5], [3], [15], [Due to my limited experience with Machine Learning _and_ Binary Feature Extraction, I will have to allocate time to learn these technologies in themselves, as well as best practices/optimisations that can be done.],
   [], [Poor planning/task estimation], [3], [5], [15], [Due to my inexperience, I will need to carefully consider how I break down the project into sections. I will consistently meet with my supervisor in order to evaluate my task estimation.],
-  [],[Imbalance between coding and report-writing],[3],[3],[9],[Continually update my report alongside coding, so that there is not a deficit between the two components.]  
+  [],[Imbalance between coding and report-writing],[3],[3],[9],[Continually update my report alongside coding, so that there is not a deficit between the two components.]
 )
 #pagebreak()
 */
@@ -232,25 +232,33 @@ In this section, we will explore the theories and practices pertaining to the at
 
 The following objectives are derived from V. Kalgutkar et al.'s article "Code Authorship Attribution: Methods and Challenges" @kalgutkar2019, and I believe they concisely represent the core goals of authorship attribution. Their descriptions have been paraphrased for clarity.
 
-#list([_*Authorship Identification*_ -- Finding the most likely author of a specific work from a set of given candidate authors.],[_*Authorship Clustering*_ -- Grouping works based on stylistic similarities to identify groups in which an author has collaborated.],
-[_*Authorship Evolution*_ -- Analysing changes in an author's code style; the way their programming skills, preferences, and writing style evolve over a period of time.],
-[_*Authorship Verification*_ -- Determining the author of a given piece of code, to ensure that innocent code has not been tampered with by malicious authors.], indent: 0.6cm, spacing: 0.4cm, marker: [--])
+#list(
+  [_*Authorship Identification*_ -- Finding the most likely author of a specific work from a set of given candidate authors.],
+  [_*Authorship Clustering*_ -- Grouping works based on stylistic similarities to identify groups in which an author has collaborated.],
+  [_*Authorship Evolution*_ -- Analysing changes in an author's code style; the way their programming skills, preferences, and writing style evolve over a period of time.],
+  [_*Authorship Verification*_ -- Determining the author of a given piece of code, to ensure that innocent code has not been tampered with by malicious authors.],
+  indent: 0.6cm,
+  spacing: 0.4cm,
+  marker: [--],
+)
 #linebreak()
-Following these objectives, we can determine which ones are most relevant to this project. The two main goals I intend to satisfy within this project will be author identification and authorship clustering. Not only do these perfectly encapsulate the goals of the project, they are also the most feasible in the application of machine learning. Authorship verification does not hold as much relevance to the project, and authorship evolution will be difficult to measure using machine learning techniques due to its dynamic nature. 
+Following these objectives, we can determine which ones are most relevant to this project. The two main goals I intend to satisfy within this project will be author identification and authorship clustering. Not only do these perfectly encapsulate the goals of the project, they are also the most feasible in the application of machine learning. Authorship verification does not hold as much relevance to the project, and authorship evolution will be difficult to measure using machine learning techniques due to its dynamic nature.
 #pagebreak()
 
 == Code Author Analysis Metrics
 
 Now that the goals and motivations have been established, we focus now on the precise metrics through which we can measure coding style. Before considering machine learning, however, it is important to understand which measurable elements of code can make an author identifiable. These can broadly be categorised into lexical, syntactic, semantic, and structural metrics @rosenblum2011 @kalgutkar2019.
 
-#list([*Lexical Metrics* -- These describe surface-level textual properties such as: variable naming conventions, identifier lengths, use of white-space, comment density, or preferred keywords.],
+#list(
+  [*Lexical Metrics* -- These describe surface-level textual properties such as: variable naming conventions, identifier lengths, use of white-space, comment density, or preferred keywords.],
 
-[*Syntactic Metrics* -- These measure the arrangement of language constructs. For example, the frequency of control structures such as loops (e.g., `for`, `while`) or conditionals (e.g., `if`, `else`), average nesting depth, or use of specific programming conventions.],
+  [*Syntactic Metrics* -- These measure the arrangement of language constructs. For example, the frequency of control structures such as loops (e.g., `for`, `while`) or conditionals (e.g., `if`, `else`), average nesting depth, or use of specific programming conventions.],
 
-[*Semantic Metrics* -- These capture the author’s problem-solving habits @stein2009: API usage, data-flow choices and preferred algorithms.],
+  [*Semantic Metrics* -- These capture the author’s problem-solving habits @stein2009: API usage, data-flow choices and preferred algorithms.],
 
-[*Structural and Behavioural Metrics* -- These focus on how a program behaves and its higher-level organisation. ],
-indent: 0.6cm, spacing: 0.4cm,
+  [*Structural and Behavioural Metrics* -- These focus on how a program behaves and its higher-level organisation. ],
+  indent: 0.6cm,
+  spacing: 0.4cm,
 )
 #linebreak()
 
@@ -266,25 +274,29 @@ First, we can examine features that fall under the *lexical* category:
   [*Number of Operands/Variables* -- The count of operands and variables in the file.],
   [*Instruction Frequency* -- Statistical counts of machine instructions (e.g., `mov`, `cmp`, `jmp`), which can also indirectly reflect an author’s structural and syntactic tendencies.],
   [*Instruction n-grams* -- Short sequences of instructions that act as stylistic proxies for common control or data manipulation patterns.],
-  indent: 0.6cm, spacing: 0.4cm,
+  indent: 0.6cm,
+  spacing: 0.4cm,
 )
 #pagebreak()
 Next, the main *syntactic* features:
 #list(
   [*Average Function Size/Count* -- The distribution of function lengths and total function count, potentially indicating individual decomposition or abstraction styles.],
-  indent: 0.6cm, spacing: 0.4cm,
+  indent: 0.6cm,
+  spacing: 0.4cm,
 )
 The *semantic* features include:
 #list(
   [*Control-Flow Graph Features* -- Quantitative properties such as loop depth, branching frequency, and cyclomatic complexity @theiling2000 that reveal higher-level structural habits.],
   [*Dataflow Analysis* -- The way data moves throughout the program's runtime.],
-  indent: 0.6cm, spacing: 0.4cm,
+  indent: 0.6cm,
+  spacing: 0.4cm,
 )
 
 The main *behavioural* feature that we will use is:
 #list(
   [*Library and API Call Usage* -- Preferences in system or library calls that persist across compilations.],
-  indent: 0.6cm, spacing: 0.4cm,
+  indent: 0.6cm,
+  spacing: 0.4cm,
 )
 
 Among all these features, it should be taken into consideration that what may appear to be features inside extracted binaries may also simply be artifacts produced by compilation @ali2025. This will mean taking extra care in the analysis of features extracted, ensuring that artifacts can be identified and removed from consideration.
@@ -306,7 +318,7 @@ The following chapter will build upon these conceptual foundations by investigat
 
 == Introduction to Binary Feature Extraction
 
-In this chapter, we examine the process of taking compiled binary files as input and extracting meaningful features from it. Building upon the attribution metrics discussed in *Chapter 2*, we can tailor the extraction process to yield only the features we care to examine, ignoring some more complex analysis. This process is non-trivial; compilers remove or alter high-level information such as variable names, indentation, or comments, leaving behind machine instructions and structural artefacts @alrabaee2020. As a result, feature extraction must operate at a lower abstraction level. 
+In this chapter, we examine the process of taking compiled binary files as input and extracting meaningful features from it. Building upon the attribution metrics discussed in *Chapter 2*, we can tailor the extraction process to yield only the features we care to examine, ignoring some more complex analysis. This process is non-trivial; compilers remove or alter high-level information such as variable names, indentation, or comments, leaving behind machine instructions and structural artefacts @alrabaee2020. As a result, feature extraction must operate at a lower abstraction level.
 
 Furthermore, we will establish the concept of feature extraction: the types of analysis (static and dynamic), as well as their challenges. On top of this, developing a feature extraction pipeline will be very important, which will also be developed further in this report.
 
@@ -335,7 +347,7 @@ At this point, the binary data is still *machine code* - unreadable to humans an
 Once the binary is disassembled, the next step is to extract measurable features that can capture the stylistic or structural characteristics of the author’s code, to be fed into a machine learning algorithm.
 
 === Feature Normalisation
-Different binaries vary in size and instruction count, so raw frequency counts are normalised (by using the average frequency per instruction) to allow fair comparison between samples. 
+Different binaries vary in size and instruction count, so raw frequency counts are normalised (by using the average frequency per instruction) to allow fair comparison between samples.
 
 == Practical Binary Analysis
 
@@ -415,14 +427,25 @@ Dissassembling `example1` gives us the following (truncated) output:
 
 Instantly, a major issue becomes apparent, being that the number of instructions is far greater than what we would expect for such a simple program. This occurs as, when compiled using `gcc` with default options, the generated ELF file includes not only user-defined functions but also large amounts of startup and library code introduced by the C runtime and standard library. Consequently, disassembling the entire binary yields a far greater instruction count than the source code suggests.
 
-There are myriad approaches to extract information from just the `main` function. Namely, instead of compiling using the command `gcc example1.c -o example1` (producing an ELF file), we can create an object file using `gcc -c example1.c -o example1.o`. However, due to this project using external datasets of binaries using any number of compilers, we will need to produce an extraction tool that can dynamically remove "noise" produced by compilers and runtime environments. 
+There are myriad approaches to extract information from just the `main` function. Namely, instead of compiling using the command `gcc example1.c -o example1` (producing an ELF file), we can create an object file using `gcc -c example1.c -o example1.o`. However, due to this project using external datasets of binaries using any number of compilers, we will need to produce an extraction tool that can dynamically remove "noise" produced by compilers and runtime environments.
 
 === Analysing Binary Structure
 
 To tackle this newly arisen issue of compiler artefacts produced in the compilation process, we will need to analyse how binary files are structured so we can extract only the user-generated sections. ELF files, which are one of the simplest formats of binary structure, are split into several sections @tiscommittee1995:
 
 #set align(center)
-#table([*ELF Header*],[*Program Header Table*], [`.text`], [`.rodata`], [`.data`], [...], [`.init`], [`.fini`], [...], [*Section Headers Table*])
+#table(
+  [*ELF Header*],
+  [*Program Header Table*],
+  [`.text`],
+  [`.rodata`],
+  [`.data`],
+  [...],
+  [`.init`],
+  [`.fini`],
+  [...],
+  [*Section Headers Table*],
+)
 #set align(left)
 #linebreak()
 #list(
@@ -433,9 +456,10 @@ To tackle this newly arisen issue of compiler artefacts produced in the compilat
   [*`.data`* -- Global/static variables that are initialised in the program],
   [*`.init`* -- The initialisation code that runs _before_ the `main` function],
   [*`.fini`* -- The finalisation code that runs _after_ the `main` function],
-  indent: 0.6cm, spacing: 0.4cm,
+  indent: 0.6cm,
+  spacing: 0.4cm,
 )
-_Note that this is not a comprehensive structural breakdown, but contains all sections relevant to the project._ 
+_Note that this is not a comprehensive structural breakdown, but contains all sections relevant to the project._
 
 From this table, we can see that the `.text` section is what we are looking to extract. Windows also produces PE files, which also include a `.text` section, even though most other sections are named different to that of ELF's. There are several Python libraries available for breaking down ELF and PE files into their sections. For this project, we will be using the `lief` library, as it can handle ELF (Linux), PE (Windows) and has an easy-to-use API.
 
@@ -463,7 +487,7 @@ Here, we use the `lief` library to get some information about the `.text` sectio
 
 == Instruction Frequency
 
-Now, given that we can extract the `.text` section of a binary file, we can look at extracting features from given this information. First, we focus on *Instruction Frequency*. 
+Now, given that we can extract the `.text` section of a binary file, we can look at extracting features from given this information. First, we focus on *Instruction Frequency*.
 
 === Extracting Raw Instruction Counts
 
@@ -503,11 +527,11 @@ This output is far more reasonable in terms of instruction counts for such a sim
 
 === Normalising Instruction Counts
 
-The next logical step is to normalise the instruction counts, as some longer binaries may have higher counts of instructions overall, we care about the relative *frequencies* (or ratios) of these instructions. As well as this, some binary files may contain a wider array of instructions, which could skew data if we dynamically inspect the instruction counts. This requires special attention, and for the purposes of the project we will focus on the main instructions that are most common and will lead to more accurate authorship attribution. 
+The next logical step is to normalise the instruction counts, as some longer binaries may have higher counts of instructions overall, we care about the relative *frequencies* (or ratios) of these instructions. As well as this, some binary files may contain a wider array of instructions, which could skew data if we dynamically inspect the instruction counts. This requires special attention, and for the purposes of the project we will focus on the main instructions that are most common and will lead to more accurate authorship attribution.
 
 Through the research of Caliskan-Islam et al. @caliskan2015 and Rosenblum et al. @rosenblum2011, they determined instructions that pertain to control flow (`jmp`, `call`, `ret`, `cmp`), memory control (`mov`, `push`, `pop`) and arithmetic (`add`, `sub`) can be used to indicate authorship. The ratios of these will be considered and added as part of the *feature set* of the machine learning aspect.
 
-In order to determine the frequencies of instructions, we will first get the total number of instructions in the `.text` section by iterating through the dictionary object returned by `getInstructionCounts`. Then, by defining some relevant instructions, we can get their count from the dictionary and trivially calculate their frequency by dividing the count by the total number of instructions. If the instruction is not found in the dictionary, we will simply set the frequency to 0. 
+In order to determine the frequencies of instructions, we will first get the total number of instructions in the `.text` section by iterating through the dictionary object returned by `getInstructionCounts`. Then, by defining some relevant instructions, we can get their count from the dictionary and trivially calculate their frequency by dividing the count by the total number of instructions. If the instruction is not found in the dictionary, we will simply set the frequency to 0.
 
 ```py
 def getInstructionFrequencies(counts):
@@ -536,12 +560,12 @@ Performing this on `example1` produces the output:
 [0.03703704 0.0617284  0.0617284  0.03703704 0.25925926 0.04938272 0.02469136 0.02469136 0.02469136]
 ```
 
-Which is a `numpy` array of type `float`, containing the frequencies neatly formatted, as `numpy` and `sklearn` are extremely compatible. 
+Which is a `numpy` array of type `float`, containing the frequencies neatly formatted, as `numpy` and `sklearn` are extremely compatible.
 
 If we run the program on the ELF files `example1`, `example2` and `example3` (found in the `product/binary-feature-extraction/examples` directory), we can visualise the distribution of the relevant instructions.
 
 #figure(
-  image("media/bfe_inst_frq.png", width: 74%)
+  image("media/bfe_inst_frq.png", width: 74%),
 )
 
 From the graph, we can deduce that the `mov` instruction is the most common throughout the examples, with the others having tiny but identifiable differences.
@@ -550,13 +574,14 @@ To summarise our findings so far with instruction counts: analysing instruction 
 
 == N-grams
 
-N-grams are a very valuable tool for authorship attribution and have been used widely in research @kalgutkar2019 as they are robust and survive compilation @burrows2007. Put simply, instruction n-grams are a sequence of $n$ consecutive instructions, represented by their mnemonics (e.g., `mov`, `jmp`). There are several types of n-grams: 
+N-grams are a very valuable tool for authorship attribution and have been used widely in research @kalgutkar2019 as they are robust and survive compilation @burrows2007. Put simply, instruction n-grams are a sequence of $n$ consecutive instructions, represented by their mnemonics (e.g., `mov`, `jmp`). There are several types of n-grams:
 #list(
-[With $n = 1$, we have *unigrams*, where we take a 1-dimensional sequence of instructions, in essence the sequence of instructions (e.g., `[mov, jmp, cmp, cmp, add]`).],
-[With $n = 2$, we have *bigrams*, where we take a 2-dimensional sequence of instructions. (e.g., `[[mov, jmp], [jmp,cmp], [cmp, cmp], [cmp, add]]`)],
-[With $n = 3$, we have *trigrams*, where we take a 3-dimensional sequence of instructions. (e.g., `[[mov, jmp, cmp], [jmp, cmp, cmp], [cmp, cmp, add]]`)],
-indent: 0.6cm, spacing: 0.4cm,
-)  
+  [With $n = 1$, we have *unigrams*, where we take a 1-dimensional sequence of instructions, in essence the sequence of instructions (e.g., `[mov, jmp, cmp, cmp, add]`).],
+  [With $n = 2$, we have *bigrams*, where we take a 2-dimensional sequence of instructions. (e.g., `[[mov, jmp], [jmp,cmp], [cmp, cmp], [cmp, add]]`)],
+  [With $n = 3$, we have *trigrams*, where we take a 3-dimensional sequence of instructions. (e.g., `[[mov, jmp, cmp], [jmp, cmp, cmp], [cmp, cmp, add]]`)],
+  indent: 0.6cm,
+  spacing: 0.4cm,
+)
 
 === Extracting Instruction n-grams
 
@@ -575,7 +600,7 @@ def getNGrams(code: bytes, n):
     for i in range(len(instructions) - n + 1):
         ngram = tuple(instructions[i:i + n])
         ngrams.append(ngram)
-    
+
     return ngrams
 ```
 This function first extracts the raw list of instructions, then using a sliding window approach, extracts each n-gram as a tuple and stores them all in a list.
@@ -583,24 +608,24 @@ This function first extracts the raw list of instructions, then using a sliding 
 Executing this function on `example` with $n = 2$ gives us an output:
 
 ```
-[('xor', 'mov'), ('mov', 'pop'), ('pop', 'mov'), ('mov', 'and'), ('and', 'push'), ('push', 'push'), ('push', 'xor'), ('xor', 'xor'), ('xor', 'lea'), 
+[('xor', 'mov'), ('mov', 'pop'), ('pop', 'mov'), ('mov', 'and'), ('and', 'push'), ('push', 'push'), ('push', 'xor'), ('xor', 'xor'), ('xor', 'lea'),
 [...]
 ```
 
 And with $n = 3$:
 ```
 [('xor', 'mov', 'pop'), ('mov', 'pop', 'mov'), ('pop', 'mov', 'and'), ('mov', 'and', 'push'), ('and', 'push', 'push'), ('push', 'push', 'xor'), ('push', 'xor', 'xor')
-[...] 
+[...]
 ```
 
 === Normalising Instruction n-grams
 
-Now we have extracted the raw n-grams, the challenge of normalising this list of tuples in a way that can be processed by a machine learning algorithm. A well-known and proven method is TF-IDF (Term Frequency - Inverse Document Frequency). It is essentially a way to weight the importance of a word (or token) in a document, _relative_ to a collection of documents. This means that tokens which appear a lot in one document won't affect the overall score as much @bafna2016. In the context of the project, each "document" is a binary file and each "token" is an instruction n-gram. However, this normalisation is done at the dataset level, as the IDF analysis requires the entire corpus. This means, for now, we can just do the TF part, where we can store all the unique n-grams in a file, with their count. Then, when we have an entire dataset, we can implement a pipeline (more in *Chapter 4*) that can handle the IDF. 
+Now we have extracted the raw n-grams, the challenge of normalising this list of tuples in a way that can be processed by a machine learning algorithm. A well-known and proven method is TF-IDF (Term Frequency - Inverse Document Frequency). It is essentially a way to weight the importance of a word (or token) in a document, _relative_ to a collection of documents. This means that tokens which appear a lot in one document won't affect the overall score as much @bafna2016. In the context of the project, each "document" is a binary file and each "token" is an instruction n-gram. However, this normalisation is done at the dataset level, as the IDF analysis requires the entire corpus. This means, for now, we can just do the TF part, where we can store all the unique n-grams in a file, with their count. Then, when we have an entire dataset, we can implement a pipeline (more in *Chapter 4*) that can handle the IDF.
 
 
 == Control Flow
 
-Analysing the control flow of a binary file can be a very good indicator of authorship @hayes2010. The use of *Control Flow Graphs* (CFGs) are imperative to ascertain how a program is structured. 
+Analysing the control flow of a binary file can be a very good indicator of authorship @hayes2010. The use of *Control Flow Graphs* (CFGs) are imperative to ascertain how a program is structured.
 
 === Extracting A Control Flow Graph
 
@@ -611,7 +636,7 @@ def getControlFlowGraph(path):
     binary = angr.Project(path, load_options={"auto_load_libs": False})
 
     cfg = binary.analyses.CFGFast()
-    
+
     return cfg
 ```
 
@@ -646,7 +671,7 @@ Node address: 0x401129  Node size: 36
 [...]
 
 Edges:
-0x401040 -> 0x500000 
+0x401040 -> 0x500000
 0x401000 -> 0x401012
 0x401000 -> 0x401010
 0x401070 -> 0x401098
@@ -680,15 +705,27 @@ Now we have a set of features extracted by our binary feature extraction tool, w
 
 #table(
   columns: 13,
-  align: (_, y) => if y == 0 { center } else { left }, 
+  align: (_, y) => if y == 0 { center } else { left },
   table.cell(colspan: 9, [*Instruction Frequencies*]),
   table.cell(colspan: 4, [*CFG Features*]),
-  [`jmp`], [`call`], [`ret`], [`cmp`], [`mov`], [`push`], [`pop`], [`add`], [`sub`], [`num_edges`], [`num_nodes`], [`density`], [`complexity`]
+  [`jmp`],
+  [`call`],
+  [`ret`],
+  [`cmp`],
+  [`mov`],
+  [`push`],
+  [`pop`],
+  [`add`],
+  [`sub`],
+  [`num_edges`],
+  [`num_nodes`],
+  [`density`],
+  [`complexity`],
 )
 
 == Assembling a Dataset
 
-All the features we have implemented thus far are useless without being able to apply them to a dataset. Many researchers use the Google Code Jam dataset, which includes several examples of code generated by the same author, with labels included. However, the main issue is that all solutions are stored as source code. As well as this, there are several different languages used in the set of solutions, so we will have to manually extract and compile only C and C++ files. 
+All the features we have implemented thus far are useless without being able to apply them to a dataset. Many researchers use the Google Code Jam dataset, which includes several examples of code generated by the same author, with labels included. However, the main issue is that all solutions are stored as source code. As well as this, there are several different languages used in the set of solutions, so we will have to manually extract and compile only C and C++ files.
 
 The dataset itself comes in the form of a Comma Separated Variable (CSV) file (downloaded from https://www.kaggle.com/datasets/jur1cek/gcj-dataset, specifically `gcj2020.csv`), meaning fields are separated by commas. The file kindly provides us the structure of the dataset on the first line:
 
@@ -712,7 +749,7 @@ Most of these features are slightly ambiguous in terms of their naming, but the 
 )
 #set align(left)
 
-The main task is now to extract the desired features to reconstruct the raw source code, (keeping the information about the author) and compiling it into a binary that can be analysed by the extraction tool. 
+The main task is now to extract the desired features to reconstruct the raw source code, (keeping the information about the author) and compiling it into a binary that can be analysed by the extraction tool.
 
 === Parsing the CSV
 
@@ -726,7 +763,7 @@ def parseCSV(path):
         reader = csv.DictReader(csvfile)
 
         row = next(reader) # Only extracting the first row
-        
+
         username = row['username']
         file_id = row['file']
         source_code = row['flines']
@@ -872,7 +909,7 @@ import subprocess
 from pathlib import Path
 from tqdm import tqdm
 
-CSV_PATH = "../gcj2020.csv"                  
+CSV_PATH = "../gcj2020.csv"
 OUTPUT_SRC_DIR = Path("dataset/src")
 OUTPUT_BIN_DIR = Path("dataset/bin")
 NUM_FILES = 75
@@ -886,7 +923,7 @@ success_log = open("compile_success.log", "w")
 fail_log = open("compile_fail.log", "w")
 ```
 
-Now, we modify our `compileSourceCode` function to write to the log files rather than just printing to the command line. 
+Now, we modify our `compileSourceCode` function to write to the log files rather than just printing to the command line.
 
 ```py
 def compileSourceCode(src_path: Path, bin_path: Path):
@@ -920,7 +957,7 @@ def parseCSV():
 
             if i == NUM_FILES:
                 break
-        
+
             username = row['username']
             file_id = row['file']
             source_code = row['flines']
@@ -957,42 +994,42 @@ def parseCSV():
 
 *`product/`* -- Contains all files relating to coding aspects of the project.
 #list(
-    marker: [],
-    [*`binary-feature-extraction/`* -- Files relating to the binary feature aspect of the project.],
-    indent: 0.4cm,
+  marker: [],
+  [*`binary-feature-extraction/`* -- Files relating to the binary feature aspect of the project.],
+  indent: 0.4cm,
 )
 #list(
-    marker: [],
-    [*`examples/`* -- Contains C source code and compiled ELF files used in testing the binary feature extraction scripts],
-    [*`scripts/`* -- The Python scripts used in testing the binary feature extraction. All scripts are also displayed in the report],
-    [*`tool/`* -- Contains a combination of testing scripts to make a function feature extraction tool],
-    indent: 1cm,
+  marker: [],
+  [*`examples/`* -- Contains C source code and compiled ELF files used in testing the binary feature extraction scripts],
+  [*`scripts/`* -- The Python scripts used in testing the binary feature extraction. All scripts are also displayed in the report],
+  [*`tool/`* -- Contains a combination of testing scripts to make a function feature extraction tool],
+  indent: 1cm,
 )
 #list(
-    marker: [],
-    [*`machine-learning/`* -- Contains all files relating to the machine learning aspect of the project.],
-    indent: 0.4cm,
+  marker: [],
+  [*`machine-learning/`* -- Contains all files relating to the machine learning aspect of the project.],
+  indent: 0.4cm,
 )
 #list(
-    marker: [],
-    [*`dataset-generation/`* -- Contains all files and directories pertaining to the generation of a dataset for the machine learning model.],
-    indent: 1cm,
+  marker: [],
+  [*`dataset-generation/`* -- Contains all files and directories pertaining to the generation of a dataset for the machine learning model.],
+  indent: 1cm,
 )
 #list(
-    marker: [],
-    [*`scripts/`* -- Testing scripts used in the examples within the report],
-    [*`tool/`* -- Contains a combination of the testing scripts, with a bit of polish, to store a unified script for generating a dataset from the CSV file],
-    indent: 1.6cm,
+  marker: [],
+  [*`scripts/`* -- Testing scripts used in the examples within the report],
+  [*`tool/`* -- Contains a combination of the testing scripts, with a bit of polish, to store a unified script for generating a dataset from the CSV file],
+  indent: 1.6cm,
 )
 #list(
-    marker: [],
-    [*`model/`* -- Contains all code and files pertaining to the machine learning model used for the project.],
-    indent: 1cm,
+  marker: [],
+  [*`model/`* -- Contains all code and files pertaining to the machine learning model used for the project.],
+  indent: 1cm,
 )
 
 === Summary of Completed Work
 
 
 
-#pagebreak() 
+#pagebreak()
 #bibliography("references.bib")

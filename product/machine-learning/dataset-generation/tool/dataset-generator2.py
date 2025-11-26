@@ -12,11 +12,12 @@ OUTPUT_BIN_DIR = Path("dataset/bin")
 OUTPUT_DATA_DIR = Path("../../model")
 OUTPUT_FILE = "binary-features.txt"
 
-NUM_FILES = 1000
+NUM_FILES = 500
 CHUNK_SIZE = 100
 COMPILER = "g++"
 COMP_FLAGS = ["-O2"]
 NUM_WORKERS = 8
+MIN_BINARIES = 5
 
 HEADER = [
     "jmp","call","ret","cmp","mov","push","pop","add","sub",
@@ -172,12 +173,18 @@ def build_dataset():
     print("Beginning dataset assembly...")
     users = sorted([d.name for d in OUTPUT_BIN_DIR.iterdir() if d.is_dir()])
     user_to_label = {user: i for i, user in enumerate(users)}
+    valid_users = []
+    for user in users:
+        bin_count = sum(1 for f in (OUTPUT_BIN_DIR/user).iterdir() if f.name.endswith(".bin"))
+        if bin_count >= MIN_BINARIES:
+            valid_users.append(user)
 
     with open(OUTPUT_DATA_DIR / OUTPUT_FILE, "w") as f:
-        print("Extracting features from binary files")
+        print("Extracting features from binary files...")
         f.write(",".join(HEADER) + "\n")
 
-        for user in tqdm(users, total=len(users), desc="Processing", unit="file"):
+        print(f"Found {len(valid_users)} valid users with at least {MIN_BINARIES} files.")
+        for user in tqdm(valid_users, total=len(users), desc="Processing", unit="file"):
             user_dir = OUTPUT_BIN_DIR / user
             label = user_to_label[user]
 
