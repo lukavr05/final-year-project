@@ -703,11 +703,12 @@ So far, this is quite trivial. An important feature of the `angr` modules is tha
 
 Now that we can extract some meaningful features from binary files, we can move onto creating a machine learning model that will be able to determine the authorship of a binary file based on this feature set. In machine learning, we deal with two main sets, $X$ being the feature set (a list of features), and $y$ being the label set (the set of authors). For each binary file in the dataset, we include the set of extracted features with the author label. Below is a visual representation of the what is included for each binary sample in the dataset:
 
+#set align(center)
 #table(
-  columns: 13,
+  columns: 11,
   align: (_, y) => if y == 0 { center } else { left },
   table.cell(colspan: 9, [*Instruction Frequencies*]),
-  table.cell(colspan: 4, [*CFG Features*]),
+  table.cell(colspan: 2, [*CFG Features*]),
   [`jmp`],
   [`call`],
   [`ret`],
@@ -719,9 +720,9 @@ Now that we can extract some meaningful features from binary files, we can move 
   [`sub`],
   [`num_edges`],
   [`num_nodes`],
-  [`density`],
-  [`complexity`],
 )
+
+#set align(left)
 
 == Assembling a Dataset
 
@@ -1157,7 +1158,15 @@ Before we can even consider creating a model on the dataset, we must first defin
 
 == Summary of Completed Work
 
+As of the time of the submission of the Interim Report (12/12/2025), the following has been completed:
 
+#list(
+  [Completed a report author attribution (*Chapter 2*), establishing the fundamentals and underlying theory of the practice],
+  [Completed a report on binary feature extraction, explaining the basics and evaluating the different features in the context of the project],
+  [Created test scripts for different stages of the binary feature extraction pipeline, combining these into a tool that can successfully extract instruction frequencies, as well as the number of edges and nodes of the control flow graph],
+  [Searched for datasets online, finding a substantial one including many source code examples with author labels. This required creating a tool to format the dataset from source code into a binary set, then into a usable feature set using the binary extarction tool],
+  [Performed preliminary experiments on different machine learning models to determine which will work best for the classification problem]
+)
 
 #pagebreak()
 #bibliography("references.bib")
