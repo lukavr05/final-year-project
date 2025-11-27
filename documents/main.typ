@@ -15,11 +15,11 @@
 ) = {
   // === DOCUMENT SETUP ===
   set document(title: [#title], author: author)
-  set text(font: "Nimbus Sans L")
+  set text(font: "Nimbus Sans")
   set par(justify: true)
   set list(indent: 0.6cm)
   show link: underline
-  show raw: set text(font: "CaskaydiaMono NFM", weight: "regular")
+  show raw: set text(font: "CaskaydiaCove NFM", weight: "regular")
   show raw.where(block: true): set block(inset: 2.5em)
 
 
@@ -133,6 +133,8 @@ And for the machine learning aspect, we require:
   [A machine learning model that, given a dataset and a list of features, can accurately predict authorship using regression models],
   [A report describing the theory that underpins the machine learning methods implemented, evaluating different models and comparing their performance],
 )
+
+Before we implement any of the tools listed above, it is necessary to establish the overarching theory that will form the basis of the project.
 
 #pagebreak()
 
@@ -308,9 +310,7 @@ Over the course of this chapter, we have examined the theoretical and practical 
 
 Consequently, this project focuses on features that are retained during the compilation process and remain quantifiable in binary form. Metrics such as control-flow complexity and library call usage provide the strongest candidates for representing authorial style in compiled executables. These features, though abstracted from the original source, can still capture meaningful patterns of authorial behaviour suitable for machine learning classification and clustering tasks.
 
-However, it is also evident that binary authorship attribution faces notable challenges, namely compilation artifacts, obfuscation and time complexity.
-
-The following chapter will build upon these conceptual foundations by investigating how the identified metrics can be systematically derived from compiled binaries. It will focus on the practical processes of extracting, structuring, and preparing these features for use in machine learning models.
+However, it is also evident that binary authorship attribution faces notable challenges, namely compilation artifacts, obfuscation and time complexity. The following chapter will build upon these conceptual foundations by investigating how the identified metrics can be systematically derived from compiled binaries. It will focus on the practical processes of extracting (taking into consideration the limitations of feature extaction with obfuscated binaries), then structuring and preparing these features for use in machine learning models.
 
 #pagebreak()
 
@@ -318,7 +318,7 @@ The following chapter will build upon these conceptual foundations by investigat
 
 == Introduction to Binary Feature Extraction
 
-In this chapter, we examine the process of taking compiled binary files as input and extracting meaningful features from it. Building upon the attribution metrics discussed in *Chapter 2*, we can tailor the extraction process to yield only the features we care to examine, ignoring some more complex analysis. This process is non-trivial; compilers remove or alter high-level information such as variable names, indentation, or comments, leaving behind machine instructions and structural artefacts @alrabaee2020. As a result, feature extraction must operate at a lower abstraction level.
+In this chapter, we examine the process of taking compiled binary files as input and extracting meaningful features from them. Building upon the attribution metrics discussed in *Chapter 2*, we can tailor the extraction process to yield only the features we intend to examine, ignoring some more complex analysis. This process is non-trivial; compilers remove or alter high-level information such as variable names, indentation, or comments, leaving behind machine instructions and structural artifacts @alrabaee2020. As a result, feature extraction must operate at a lower abstraction level.
 
 Furthermore, we will establish the concept of feature extraction: the types of analysis (static and dynamic), as well as their challenges. On top of this, developing a feature extraction pipeline will be very important, which will also be developed further in this report.
 
@@ -701,7 +701,7 @@ So far, this is quite trivial. An important feature of the `angr` modules is tha
 
 == Introduction to Machine Learning
 
-Now we have a set of features extracted by our binary feature extraction tool, we can move onto creating a machine learning model that will be able to determine the authorship of a binary file based on this feature set. In machine learning, we deal with two main sets, $X$ being the feature set (a list of features), and $y$ being the label set (the set of authors). For each binary file in the dataset, we include the set of extracted features with the author label. Below is a visual representation of the what is included for each binary sample in the dataset:
+Now that we can extract some meaningful features from binary files, we can move onto creating a machine learning model that will be able to determine the authorship of a binary file based on this feature set. In machine learning, we deal with two main sets, $X$ being the feature set (a list of features), and $y$ being the label set (the set of authors). For each binary file in the dataset, we include the set of extracted features with the author label. Below is a visual representation of the what is included for each binary sample in the dataset:
 
 #table(
   columns: 13,
@@ -725,9 +725,9 @@ Now we have a set of features extracted by our binary feature extraction tool, w
 
 == Assembling a Dataset
 
-All the features we have implemented thus far are useless without being able to apply them to a dataset. Many researchers use the Google Code Jam dataset, which includes several examples of code generated by the same author, with labels included. However, the main issue is that all solutions are stored as source code. As well as this, there are several different languages used in the set of solutions, so we will have to manually extract and compile only C and C++ files.
+All the features we have implemented thus far are essentially meaningless without being able to apply them to a dataset.Through my own explorations and from the reading I have conducted, the best dataset to work with for binary author attribution appears to be the Google Code Jam dataset, which includes several examples of code generated by the same author, with labels included. However, the main issue is that all solutions are stored as source code. As well as this, there are several different languages used in the set of solutions, so we will have to manually extract and compile only C and C++ files.
 
-The dataset itself comes in the form of a Comma Separated Variable (CSV) file (downloaded from https://www.kaggle.com/datasets/jur1cek/gcj-dataset, specifically `gcj2020.csv`), meaning fields are separated by commas. The file kindly provides us the structure of the dataset on the first line:
+The dataset itself comes in the form of a Comma Separated Variable (CSV) file (downloaded from https://www.kaggle.com/datasets/jur1cek/gcj-dataset, specifically the file `gcj2020.csv`), meaning fields are separated by commas. The file kindly provides us the structure of the dataset on the first line as a header:
 
 #set align(center)
 ```
@@ -749,7 +749,7 @@ Most of these features are slightly ambiguous in terms of their naming, but the 
 )
 #set align(left)
 
-The main task is now to extract the desired features to reconstruct the raw source code, (keeping the information about the author) and compiling it into a binary that can be analysed by the extraction tool.
+The main task is now to extract the desired atteibutes to reconstruct the raw source code, (keeping the information about the author) and compiling it into a binary that can be analysed by the extraction tool.
 
 === Parsing the CSV
 
@@ -897,98 +897,226 @@ def compileSourceCode(src_path, bin_path):
 
 By capturing the output of the subprocess, we can determine whether the file successfully compiled or not, and capture any relevant output (to return the error message). Additionally, we want to ensure that the program does not get stuck in an infinte loop, so we account for timeout errors as well. In the final tool, we can use these outputs and store them in `.log` files, to keep track of what is happening.
 
-=== The Final Tool
+=== Generating the Final Dataset
 
 Given all the components discussed above, we can now combine them all to create a single script that parses the entire CSV file, extracts the source code (organising by user), and compiles it to provide a set of binary files. Once we have all of our binary files, we can build a dataset.
 
 First, we must set up the environment, importing all necessary modules, setting some important variables and defining the paths of the files to be used.
 
 ```py
-import csv
+import pandas as pd
 import subprocess
+import logging
 from pathlib import Path
 from tqdm import tqdm
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from extraction_tool import *
 
 CSV_PATH = "../gcj2020.csv"
 OUTPUT_SRC_DIR = Path("dataset/src")
 OUTPUT_BIN_DIR = Path("dataset/bin")
-NUM_FILES = 75
+OUTPUT_DATA_DIR = Path("../../model")
+OUTPUT_FILE = "binary-features.txt"
+
+NUM_FILES = 1000
+CHUNK_SIZE = 100
 COMPILER = "g++"
 COMP_FLAGS = ["-O2"]
+NUM_WORKERS = 8
+MIN_BINARIES = 5
+
+HEADER = [
+    "jmp","call","ret","cmp","mov","push","pop","add","sub",
+    "cfg_nodes","cfg_edges",
+    "label"
+]
 
 OUTPUT_SRC_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_BIN_DIR.mkdir(parents=True, exist_ok=True)
-
-success_log = open("compile_success.log", "w")
-fail_log = open("compile_fail.log", "w")
 ```
 
-Now, we modify our `compileSourceCode` function to write to the log files rather than just printing to the command line.
+Most of these constants are hopefully self-explanatory, however for clarity. We can establish the meaning for some of the more ambiguous ones: `NUM_FILES` is the number of files we wish to process (iterating through the extracted CSV file reveals that there are roughly 50,000 files in total),`CHUNK_SIZE` is the number of files we intend to process at once (using the `pandas` library for more efficiency), `NUM_WORKERS` is the number of parallel workers we will implement for parallel compilation (more below), `MIN_BINARIES` is the minimum number of binaries that a user should have in order to be considered "valid", and `HEADER` is the list of everything we store in the final dataset `.txt` file.
+
+Now, we modify our `compileSourceCode` function to write to the log files rather than just printing to the command line, as well as ignoring the output of the compilation, as this introduces overhead in the program's runtime.
 
 ```py
 def compileSourceCode(src_path: Path, bin_path: Path):
     try:
-        cmd = [COMPILER, *COMP_FLAGS, "-o", str(bin_path), str(src_path)]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=20)
-
-        if result.returncode != 0:
-            fail_log.write(f"[FAIL] {src_path} → {result.stderr}\n")
-            return False
-
-        success_log.write(f"[OK] {src_path}\n")
-        return True
+        result = subprocess.run(
+            [COMPILER, *COMP_FLAGS, "-o", str(bin_path), str(src_path)],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=20,
+        )
+        return result.returncode == 0
 
     except subprocess.TimeoutExpired:
-        fail_log.write(f"[TIMEOUT] {src_path}\n")
+        return False
+
+    except Exception:
         return False
 ```
 
-With that, we can move on to our CSV parsing, where we will write the new C++ file and compile it together, storing the binaries in the same format (with a directory for each user). For now, we only take the first 100 entries to create a subset of the actual dataset (which contains over 50,000 files).
+Now we have the compilation script, we can establish how we will process each file and write the individual file to a source code in a separate directory for each user, then using that extracted source code to compile a binary (stored in the same format, with a directory for each user):
+
+```py
+def processFile(args):
+    username, file_id, source_code, file_name, src_dir, bin_dir = args
+    
+    if not file_name.lower().endswith(".cpp"):
+        return ("skip", username, file_id, "INVALID FILE FORMAT")
+    
+    src_path = src_dir / f"{file_id}.cpp"
+    try:
+        with open(src_path, "w", encoding="utf-8") as f:
+            f.write(source_code)
+    except Exception as e:
+        return ("error", username, file_id, f"Write error: {str(e)[:100]}")
+    
+    bin_path = bin_dir / f"{file_id}.bin"
+    ok = compileSourceCode(src_path, bin_path)
+    
+    if ok:
+        return ("success", username, file_id, None)
+    else:
+        return ("fail", username, file_id, None)
+```
+
+Given the updated compilation tool, we can move on to the actual CSV parsing. We begin by pre-computing the directories we will require, as this reduces the number of system calls that are made during runtime. We feed the CSV file into `pandas` and split it into chunks specified by the `CHUNK_SIZE` constant.
 
 ```py
 def parseCSV():
-    print("Starting CSV Parsing & Compilation...")
-
-    with open(CSV_PATH, newline='', encoding="utf-8") as csvfile:
-        reader = csv.DictReader(csvfile)
-        success_count = 0
-
-        for i, row in enumerate(tqdm(reader, total=NUM_FILES, desc="Files Read")):
-
-            if i == NUM_FILES:
+    print("Starting CSV processing...")
+    
+    precomputeDirectories()
+    
+    tasks = []
+    processed = 0
+    
+    print("Loading tasks...")
+    chunk_iter = pd.read_csv(CSV_PATH, chunksize=CHUNK_SIZE, dtype=str, engine="python")
+    
+    for chunk in chunk_iter:
+        if processed >= NUM_FILES:
+            break
+            
+        for _, row in chunk.iterrows():
+            if processed >= NUM_FILES:
                 break
-
-            username = row['username']
-            file_id = row['file']
-            source_code = row['flines']
-            file_name = row['full_path']
-
-            out_dir = OUTPUT_SRC_DIR / username
-            out_dir.mkdir(parents=True, exist_ok=True)
-
-            if file_name.lower().endswith(".cpp"):
-                ext = ".cpp"
-            else:
-                ext = ".txt"  # default fallback
-
-            src_path = out_dir / f"{file_id}{ext}"
-
-            with open(src_path, "w", encoding="utf-8") as f:
-                f.write(source_code)
-
-            bin_out_dir = OUTPUT_BIN_DIR / username
-            bin_out_dir.mkdir(parents=True, exist_ok=True)
-            bin_path = bin_out_dir / f"{file_id}.bin"
-
-            if compile_source(src_path, bin_path):
-                success_count += 1
-
-        print(f"Successfully compiled {success_count} of {NUM_FILES} files.")
+                
+            username = row.get("username", "unknown")
+            file_id = row.get("file", "unknown")
+            source_code = row.get("flines", "")
+            file_name = row.get("full_path", "")
+            
+            src_dir = OUTPUT_SRC_DIR / username
+            bin_dir = OUTPUT_BIN_DIR / username
+            
+            tasks.append((username, file_id, source_code, file_name, src_dir, bin_dir))
+            processed += 1
+    
 ```
 
-== Appendix
+With that, we can move on to the actual compilation, where we use the functions above to extract and compile the source code. We split the CSV into chunks, where we process each chunk at a time in parallel, and store the results in `.log` files. The `tqdm` module simply provides a low-overhead API that outputs a progress bar for the comilation, as this is a large task, and being able to see how many files have been processed and the files processed per second is very useful.
 
-=== Project Structure
+```py    
+    print(f"Loaded {len(tasks)} tasks, starting parallel compilation...")
+    
+    success_count = 0
+    failed_count = 0
+    skipped_count = 0
+    
+    success_log = open("compile_success.log", "w", buffering=8192)
+    fail_log = open("compile_fail.log", "w", buffering=8192)
+    
+    try:
+        with ProcessPoolExecutor(max_workers=NUM_WORKERS) as executor:
+            futures = {executor.submit(process_file, task): task for task in tasks}
+            
+            with tqdm(total=len(tasks), desc="Compiling", unit="file") as pbar:
+                for future in as_completed(futures):
+                    result = future.result()
+                    status, username, file_id, msg = result
+                    
+                    if status == "success":
+                        success_count += 1
+                        success_log.write(f"[OK] {username}/{file_id}.cpp\n")
+                        
+                    elif status == "fail" or status == "error":
+                        failed_count += 1
+                        fail_log.write(f"[FAILED] {username}/{file_id}.cpp\n")
+
+                    elif status == "skip":
+                        skipped_count += 1
+                        fail_log.write(f"[SKIP] {username}/{file_id} - {msg}\n")
+                    
+                    pbar.update(1)
+        
+        print(f"\nSuccessfully compiled {success_count} out of {len(tasks)} files. (Skipped: {skipped_count}, Failed: {failed_count})")
+        
+    finally:
+        success_log.close()
+        fail_log.close()
+```
+
+Finally, we can use the binary feature extraction tool established in *Chapter 3* to get the features from the binaries we have extracted so far. The below function first assigns a numeric label to each user (to be stored in the dataset instead of the actual username), then iterates through each directory, and checks if the number of binaries is _at least_ the number specified by `MIN_BINARIES`. Then, if the user is deemed "valid" for processing, we can extract the features from the binary file, and write the whole row to the final dataset.
+
+```py
+def buildDataset():
+    parseCSV()
+
+    print("Beginning dataset assembly...")
+    users = sorted([d.name for d in OUTPUT_BIN_DIR.iterdir()])
+    user_to_label = {user: i for i, user in enumerate(users)}
+    valid_users = []
+    for user in users:
+        bin_count = sum(1 for f in (OUTPUT_BIN_DIR/user).iterdir())
+        if bin_count >= MIN_BINARIES:
+            valid_users.append(user)
+
+    with open(OUTPUT_DATA_DIR / OUTPUT_FILE, "w") as f:
+        print("Extracting features from binary files...")
+        f.write(",".join(HEADER) + "\n")
+
+        print(f"Found {len(valid_users)} valid users with at least {MIN_BINARIES} files.")
+        for user in tqdm(valid_users, total=len(users), desc="Processing", unit="file"):
+            user_dir = OUTPUT_BIN_DIR / user
+            label = user_to_label[user]
+
+
+            for bin_file in user_dir.iterdir():
+                if not bin_file.name.endswith(".bin"):
+                    continue
+
+                try:
+                    features = extractBinaryFeatures(str(bin_file))
+                except Exception as e:
+                    print(f"[WARN] Failed to extract from {bin_file}: {e}")
+                    continue
+
+                full_row = np.append(features, label)
+
+                row_str = ",".join(str(v) for v in full_row)
+
+                f.write(row_str + "\n")
+
+    print(f"\nDataset written to {OUTPUT_FILE}") 
+```
+
+We now have a very useful and efficient command-line tool that generates a datset with the features we have gathered so far and the labels, ready for a machine learning model.
+
+== Creating a Model
+
+=== Choosing a Model
+
+Before we can even consider creating a model on the dataset, we must first define and evaluate the model to use for the machine learning aspect. Also, we must consider the type of problem we have. Given that we have a set of features and we wish to predict a label, or class, based off of these features, rather than using the features to numerically describe an unknown label, the problem is that of *classification*.
+
+
+
+
+= Appendix
+
+== Project Structure
 
 *`documents/`* -- Contains all documents and media for the main report, including the `main.typ` for report editing, `refernces.bib` containg all BibTeX references, a Jupyter Notebook for testing the binary feature extraction, as well as the project plan.
 
@@ -1027,7 +1155,7 @@ def parseCSV():
   indent: 1cm,
 )
 
-=== Summary of Completed Work
+== Summary of Completed Work
 
 
 
