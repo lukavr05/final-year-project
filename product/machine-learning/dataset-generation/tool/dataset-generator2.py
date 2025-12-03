@@ -12,7 +12,7 @@ OUTPUT_BIN_DIR = Path("dataset/bin")
 OUTPUT_DATA_DIR = Path("../../model")
 OUTPUT_FILE = "binary-features.txt"
 
-NUM_FILES = 500
+NUM_FILES = 2000
 CHUNK_SIZE = 100
 COMPILER = "g++"
 COMP_FLAGS = ["-O2"]
@@ -21,7 +21,7 @@ MIN_BINARIES = 5
 
 HEADER = [
     "jmp","call","ret","cmp","mov","push","pop","add","sub",
-    "cfg_nodes","cfg_edges",
+    "cfg_nodes","cfg_edges", "density", "cyclomatic", "num_functions", "num_branches", "branch_ratio",
     "label"
 ]
 
@@ -183,7 +183,7 @@ def build_dataset():
         f.write(",".join(HEADER) + "\n")
 
         print(f"Found {len(valid_users)} valid users with at least {MIN_BINARIES} files.")
-        for user in tqdm(valid_users, total=len(users), desc="Processing", unit="file"):
+        for user in tqdm(valid_users, total=len(valid_users), desc="Processing", unit="file"):
             user_dir = OUTPUT_BIN_DIR / user
             label = user_to_label[user]
 
