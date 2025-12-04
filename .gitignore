@@ -6,3 +6,4 @@ uv.lock
 **/machine-learning/dataset-generation/tool/compile_fail.log
 **/machine-learning/dataset-generation/tool/compile_success.log
 **/machine-learning/dataset-generation/tool/__pycache__/
+**/machine-learning/dataset-generation/tool/binary-features.txt
