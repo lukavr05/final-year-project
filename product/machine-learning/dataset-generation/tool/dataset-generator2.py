@@ -12,7 +12,7 @@ OUTPUT_BIN_DIR = Path("dataset/bin")
 OUTPUT_DATA_DIR = Path("../../model")
 OUTPUT_FILE = "binary-features.txt"
 
-NUM_FILES = 2000
+NUM_FILES = 500
 CHUNK_SIZE = 100
 COMPILER = "g++"
 COMP_FLAGS = ["-O2"]
