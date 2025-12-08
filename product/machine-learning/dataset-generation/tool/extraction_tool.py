@@ -2,6 +2,7 @@ import lief
 import numpy as np
 import angr
 from capstone import *
+import networkx as nx
 
 
 def getTextfromBinary(path):
@@ -92,16 +93,19 @@ def getCFGFeatures(path):
     num_nodes = len(g.nodes())
     num_edges = len(g.edges())
 
-    return np.array([num_nodes, num_edges], dtype=float)
+    density = nx.density(g)
+    cyclomatic = num_edges - num_nodes + 2 * nx.number_weakly_connected_components(g)
+    num_functions = len(cfg.kb.functions)
+    num_branches = sum(1 for n, d in g.out_degree() if d > 1)
+    branch_ratio = num_branches / num_nodes if num_nodes > 0 else 0
+
+    return np.array([num_nodes, num_edges, density, cyclomatic, num_functions, num_branches, branch_ratio], dtype=float)
 
 def extractBinaryFeatures(path):
-    print("Getting text from binary...")
     text = getTextfromBinary(path)
-    print("Successfully extracted text")
 
     instr_freqs = getInstructionFrequencies(text)
     cfg_feats = getCFGFeatures(path)
 
     return np.concatenate((instr_freqs, cfg_feats))
 
-print(extractBinaryFeatures("./dataset/bin/Benq/0000000000210bf5.bin"))
