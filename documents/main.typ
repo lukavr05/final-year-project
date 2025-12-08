@@ -47,7 +47,7 @@
   // === FRONT PAGE ===
   set align(center)
 
-  text(22pt, "Final Year Project Report")
+  text(22pt, "Final Year Project Interim Report")
   v(3mm)
   line(length: 100%)
   text(30pt, weight: "bold", title)
@@ -688,14 +688,27 @@ g = cfg.model.graph
 
 num_nodes = len(g.nodes())
 num_edges = len(g.edges())
+
 ```
 
 So far, this is quite trivial. An important feature of the `angr` modules is that they are compatible with `networkx`, a very useful model in graph analysis @hagberg2008. We can use some features of this module to get some more values out, such as the graph density (the ratio between the actual edges and the maximum number of edges possible) and cyclomatic complexity (a measure of the complexity of a graph). We can extract these using the following:
 
+```
+density = nx.density(g)
+cyclomatic = num_edges - num_nodes + 2 * nx.number_weakly_connected_components(g)
+num_functions = len(cfg.kb.functions)
+num_branches = 0
+for _, d in g.out_degree():
+    if d > 1:
+        num_branches += 1
+        
+if num_nodes > 0:
+    branch_ratio = num_branches / num_nodes
+else:
+    branch_ratio = 0
+```
 
-
-#pagebreak()
-
+We now have sufficient features from the control flow graph 
 
 = Machine Learning
 
@@ -704,25 +717,42 @@ So far, this is quite trivial. An important feature of the `angr` modules is tha
 Now that we can extract some meaningful features from binary files, we can move onto creating a machine learning model that will be able to determine the authorship of a binary file based on this feature set. In machine learning, we deal with two main sets, $X$ being the feature set (a list of features), and $y$ being the label set (the set of authors). For each binary file in the dataset, we include the set of extracted features with the author label. Below is a visual representation of the what is included for each binary sample in the dataset:
 
 #set align(center)
-#table(
-  columns: 11,
-  align: (_, y) => if y == 0 { center } else { left },
-  table.cell(colspan: 9, [*Instruction Frequencies*]),
-  table.cell(colspan: 2, [*CFG Features*]),
-  [`jmp`],
-  [`call`],
-  [`ret`],
-  [`cmp`],
-  [`mov`],
-  [`push`],
-  [`pop`],
-  [`add`],
-  [`sub`],
-  [`num_edges`],
-  [`num_nodes`],
+#block(
+  inset: 0.4cm,
+  table(
+    inset: 0.1cm,
+    columns: 16,
+    align: (_, y) => if y == 0 { center } else { left },
+    table.cell(colspan: 9, [*Instruction Frequencies*]),
+    table.cell(colspan: 7, [*CFG Features*]),
+    [`jmp`],
+    [`call`],
+    [`ret`],
+    [`cmp`],
+    [`mov`],
+    [`push`],
+    [`pop`],
+    [`add`],
+    [`sub`],
+    [`num
+edges`],
+    [`num
+nodes`],
+    [`dens
+ity`],
+    [`cyclo
+matic`],
+    [`num
+funcs`],
+    [`num
+brs`],
+    [`branch
+ratio`],
+  )
 )
-
 #set align(left)
+
+Our label set will contain a numeric representation of an author's name, computed in the dataset assembly process. 
 
 == Assembling a Dataset
 
@@ -1015,7 +1045,6 @@ def parseCSV():
             
             tasks.append((username, file_id, source_code, file_name, src_dir, bin_dir))
             processed += 1
-    
 ```
 
 With that, we can move on to the actual compilation, where we use the functions above to extract and compile the source code. We split the CSV into chunks, where we process each chunk at a time in parallel, and store the results in `.log` files. The `tqdm` module simply provides a low-overhead API that outputs a progress bar for the comilation, as this is a large task, and being able to see how many files have been processed and the files processed per second is very useful.
@@ -1108,12 +1137,108 @@ We now have a very useful and efficient command-line tool that generates a datse
 
 == Creating a Model
 
+=== Splitting the Dataset
+
+Now we have out dataset in `.txt` format, we must define our feature set $X$ and our label set $y$. This can be done using the `numpy` library, extracting the last column in our file to get the labels, and the rest as the features. We can split the feature set into a training set and test set using `sklearn`'s in-built `train_test_split` function, using the `random_state` parameter to "shuffle" the feature set pseudo-randomly.
+
+```py
+NUM_FEATURES = 16
+
+X = np.genfromtxt("binary-features.txt", 
+  delimiter=",", 
+  usecols=np.arange(NUM_FEATURES), 
+  skip_header=1)
+y = np.genfromtxt("binary-features.txt", 
+  delimiter=",", 
+  usecols=NUM_FEATURES, 
+  skip_header=1)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2408, stratify=y)
+```
+
+Next, we can scale the data. Although we already normalise some features (such as the instruction counts), scaling $X$ can help prevent anomalies from skewing out predictions later down the line in the training process. For this, we use `sklearn`'s `StandardScaler` class.
+
+```py
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+```
+
 === Choosing a Model
 
-Before we can even consider creating a model on the dataset, we must first define and evaluate the model to use for the machine learning aspect. Also, we must consider the type of problem we have. Given that we have a set of features and we wish to predict a label, or class, based off of these features, rather than using the features to numerically describe an unknown label, the problem is that of *classification*.
+Before we can even consider making predictions on the dataset, we must first define and evaluate the model to use for the machine learning aspect. Also, we must consider the type of problem we have. Given that we have a set of features and we wish to predict a label, or class, based off of these features, rather than using the features to numerically describe an unknown label, the problem is that of *classification*.
 
+The `sklearn` Python module offers several different classifier models. Each model takes a different set of hyper-parameters (settings for the model) that are used in the algorithm to modify the output. Tweaking these hyper-parameters can reduce a model's tendency to overfit (training too specifically on the training set and making errors on the test set), and underfit (not training enough on the training set and focusing on the test set). To test the effectiveness of each model, we can use cross-validation to get the best parameters. This is a necessity as we intend to get the best model that reduces overfitting and is as optimal as possible. The `GridSearchCV` is an extremely useful class that takes in a set of parameters to test, then automatically runs a grid search cross-validation. To do this, we need to split the already existing sets into validation sets, so that the cross-validation can be verified.
 
+```py
+X_train_pr, X_valid, y_train_pr, y_valid = train_test_split(
+    X_train, y_train, test_size=0.2, random_state=42
+)
 
+grid_search = GridSearchCV(
+        model,
+        grid,
+        cv=5,
+        n_jobs=-1,
+        verbose=1
+    )
+
+    start = time.time()
+    grid_search.fit(X_train_pr, y_train_pr)
+    elapsed = time.time() - start
+
+    best_model = grid_search.best_estimator_
+    accuracy = best_model.score(X_valid, y_valid)
+
+    print(f"Best Params: {grid_search.best_params_}")
+    print(f"Best CV Score: {grid_search.best_score_:.4f}")
+    print(f"Validation Accuracy: {accuracy:.4f}")
+    print(f"Time: {elapsed:.2f}s")
+```
+
+This script outputs, for each model, the best parameters, the best cross-validation score, the accuracy on the validation set, and the time taken.
+
+```
+Tuning KNN...
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Best Params: {'clf__n_neighbors': 3, 'clf__p': 2, 'clf__weights': 'distance'}
+Best CV Score: 0.4109
+Validation Accuracy: 0.3276
+Time: 1.10s
+
+Tuning SVC...
+Fitting 5 folds for each of 25 candidates, totalling 125 fits
+Best Params: {'clf__C': 100, 'clf__gamma': 'scale', 'clf__kernel': 'rbf'}
+Best CV Score: 0.4414
+Validation Accuracy: 0.3966
+Time: 0.21s
+
+Tuning LogisticRegression...
+Fitting 5 folds for each of 5 candidates, totalling 25 fits
+Best Params: {'clf__C': 100, 'clf__penalty': 'l2', 'clf__solver': 'lbfgs'}
+Best CV Score: 0.4281
+Validation Accuracy: 0.2931
+Time: 0.45s
+
+Tuning RandomForest...
+Fitting 5 folds for each of 32 candidates, totalling 160 fits
+Best Params: {'criterion': 'entropy', 'max_depth': 8, 'max_features': 'sqrt', 'n_estimators': 500}
+Best CV Score: 0.4328
+Validation Accuracy: 0.3621
+Time: 15.79s
+```
+
+We can easily visualise and compare the models using the below graph, displaying the accuracy on the validation set, as well as the cross-validation score.
+
+#figure(
+  image("media/model_compfr.png", width: 80%)
+)
+
+From this, we can derive that the SVC model, with the best hyper-parameters, is the best model to work with, given the cross-validation.
+
+#pagebreak()
 
 = Appendix
 
@@ -1162,11 +1287,112 @@ As of the time of the submission of the Interim Report (12/12/2025), the followi
 
 #list(
   [Completed a report author attribution (*Chapter 2*), establishing the fundamentals and underlying theory of the practice],
-  [Completed a report on binary feature extraction, explaining the basics and evaluating the different features in the context of the project],
+  [Completed a report on binary feature extraction (*Chapter 3*), explaining the basics and evaluating the different features in the context of the project],
   [Created test scripts for different stages of the binary feature extraction pipeline, combining these into a tool that can successfully extract instruction frequencies, as well as the number of edges and nodes of the control flow graph],
   [Searched for datasets online, finding a substantial one including many source code examples with author labels. This required creating a tool to format the dataset from source code into a binary set, then into a usable feature set using the binary extarction tool],
   [Performed preliminary experiments on different machine learning models to determine which will work best for the classification problem]
 )
+
+== Project Diary
+
+```md
+## Entry 22 - 04/12/2025
+
+Lowered dataset size for testing on my laptop, and added generated files to the gitignore file. Skipped using the GradientBooster classifier in machine learning tests as it takes far too long to cross-validate.
+
+## Entry 21 - 03/12/2025
+
+Revamped the machine learning tests, using the GridSearchCV class and a pipeline to speed up model training.
+
+## Entry 20 - 27/11/2025
+
+Completed the summary of work section for the report, as well as updating the machine learning section with my new machine learning progress.
+
+Updated some tests for the machine learning models, testing some cross-validation methods to see which classifier is best
+
+## Entry 19 - 25/11/2025
+
+Added binary feature extraction tool to the overall dataset generation pipeline, successfully prototyping dataset generation.
+
+## Entry 18 - 24/11/2025
+
+Added a progress bar to the dataset generation tool. This decision came as I wanted to see how fast it runs. However, I noticed it ran very slow so decided to migrate the project from using `pip` to `uv`, a faster package manager. This led to minor improvements, but I beieve the limitation lies in my laptop hardware.
+
+Added sections to my report that are required for the interim report.
+
+## Entry 17 - 21/11/2025
+
+Finished tool for extracting binaries from the CFG. Pausing development of new tools for now, focusing on formatting all my work for the interim report.
+
+## Entry 16 - 20/11/2025
+
+Began work on Machine Learning aspect of the project, as this will be useful going into Term 2. Researched datasets that contain author AND binary files, however all that I found was a CSV file from the Google Code Jam competition. This meant I had to create a tool to extract the source code from the file, as well as create binaries from the extracted source code.
+
+## Entry 15 - 19/11/2025
+
+Paused work on the n-grams, instead working on extracting CFG. Very complicated to implement by hand and my solution will likely be inefficient/slow, so opting to use pre-existing libraries. Managed to do some basic CFG extraction and planning to normalise some features from it.
+
+## Entry 14 - 17/11/2025
+
+Started to implement the n-gram extraction. This is because of its simplicity. While I was able to implement it, I hit a roadblock when trying to normalise the data as I require a whole dataset to do this. I intend to use the sklearn module to do TF-IDF, but this can only be done in conjunction with the machine learning experiments.
+
+## Entry 13 - 12/11/2025
+
+Successfully implemented the instruction frequency part of the the extraction tool. Put the results in a jupyter notebook so that I can analyse and visualise the results when running on some examples. 
+
+## Entry 12 - 10/11/2025
+
+Added some more binary examples, modified some old scripts and implemented successful extraction of the .text section of the binary file. This allowed me to begin working on the instruction counts/frequency without worrying about compiler noise.
+
+## Entry 11 - 06/11/2025
+
+Changed binary examples from Windows .exe files to Linux ELF, as this reduces compiler overhead and have more accessible extraction libraries available.
+
+## Entry 10 - 04/11/2025
+
+Added extraction scripts to get the basic information from a binary file. Encountered some issues when it came to massive instruction sets for basic programs.
+
+## Entry 9 - 29/10/2025
+
+Started basic research into binary feature extraction. Set up some basic experiments on a new branch to ensure that changes can be reverted easily.
+
+## Entry 8 - 27/10/2025
+
+Completed the author attribution report, complete with conclusion and merged into the main branch.
+
+## Entry 7 - 21/10/2025
+
+Conducted additional research into code author analysis metrics. Polished off attribution objectives section with a conclusion. Mostly finished analysis metrics section.
+
+## Entry 6 - 15/10/2025
+
+Began report on author attribution, conducted additional research into objectives of author attribution.
+
+## Entry 5 = 10/10/2025
+
+Completed preliminary project plan and submitted for review.
+
+## Entry 5 - 09/10/2025
+
+Reviewed draft of project plan in context of required deliverables. Added paragraph outlining Term 1 plans, including reports I plan to write.
+
+## Entry 4 - 08/10/2025
+
+Completed abstract, timeline, and risk assessment and mitigations, as well as meeting with supervisor to discuss current draft of report.
+
+## Entry 3 - 06/10/2025
+
+Searched for supplementary sources on binary feature extraction. Set up Typst project where all report-writing will happen. Started developing Term 1 timeline.
+
+## Entry 2 - 01/10/2025
+
+Began researching into recommended sources, drafted rough abstract for Term 1 project plan.
+
+## Entry 1 - 30/09/2025
+
+Initialised project repository and diary.
+
+```
 
 #pagebreak()
 #bibliography("references.bib")
