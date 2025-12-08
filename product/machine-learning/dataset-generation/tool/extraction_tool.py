@@ -1,6 +1,7 @@
 import lief
 import numpy as np
 import angr
+import networkx as nx
 from capstone import *
 
 
@@ -92,7 +93,20 @@ def getCFGFeatures(path):
     num_nodes = len(g.nodes())
     num_edges = len(g.edges())
 
-    return np.array([num_nodes, num_edges], dtype=float)
+    density = nx.density(g)
+    cyclomatic = num_edges - num_nodes + 2 * nx.number_weakly_connected_components(g)
+    num_functions = len(cfg.kb.functions)
+    num_branches = 0
+    for _, d in g.out_degree():
+        if d > 1:
+            num_branches += 1
+            
+    if num_nodes > 0:
+        branch_ratio = num_branches / num_nodes
+    else:
+        branch_ratio = 0
+    
+    return np.array([num_nodes, num_edges, density, cyclomatic, num_functions, num_branches, branch_ratio], dtype=float)
 
 def extractBinaryFeatures(path):
     print("Getting text from binary...")
