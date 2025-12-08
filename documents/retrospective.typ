@@ -130,8 +130,8 @@ I had to abandon the machine learning development, as I had to complete my inter
 
 = Reflection
 
-Although I ended up with a product I am very happy with overall, I think several improvements can be made going into next term. One of the main inhibitors of progress was getting stuck on very specific topics for extended periods. For example, when generating a dataset, it took a week of hard work to simply get the tool working, meaning I could not work on anything else in that time, even though it was a minute aspect of the project. This also occurred in the binary feature extraction section, as I focused on one feature at a time rather than planning the features in advance.
+Although I ended up with a product I am very happy with overall, I think several improvements can be made going into next term. One of the main inhibitors of progress was getting stuck on very specific topics for extended periods. For example, when generating a dataset, it took a week of hard work to simply get the tool working, meaning I could not work on anything else in that time, even though it was a minute aspect of the project. This also occurred in the binary feature extraction section, as I focused on one feature at a time rather than planning the features in advance. Another issue that arose was that I was not using issues as effectively as I would have liked to, only making vague statements that I did not really fulfill.
 
-Moving forward, I intend to plan out the programming aspect more, so I can switch between concepts if one proves to more difficult.
+Moving forward, I intend to plan out the programming aspect more, so I can switch between concepts if one proves to more difficult. This parallel development will ensure progress stays maintainable and consistent throughout. I will also use the issue tracking system in Gitlab to keep track of my completed work, and what tasks I have yet to complete.
 
 = Risk Assessment
