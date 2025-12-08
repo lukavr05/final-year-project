@@ -3,6 +3,7 @@ import numpy as np
 import angr
 import networkx as nx
 from capstone import *
+import networkx as nx
 
 
 def getTextfromBinary(path):
@@ -109,13 +110,10 @@ def getCFGFeatures(path):
     return np.array([num_nodes, num_edges, density, cyclomatic, num_functions, num_branches, branch_ratio], dtype=float)
 
 def extractBinaryFeatures(path):
-    print("Getting text from binary...")
     text = getTextfromBinary(path)
-    print("Successfully extracted text")
 
     instr_freqs = getInstructionFrequencies(text)
     cfg_feats = getCFGFeatures(path)
 
     return np.concatenate((instr_freqs, cfg_feats))
 
-print(extractBinaryFeatures("./dataset/bin/Benq/0000000000210bf5.bin"))
