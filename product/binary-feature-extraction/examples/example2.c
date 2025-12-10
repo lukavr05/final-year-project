@@ -1,6 +1,7 @@
 #include <stdio.h>
 
-int main() {
+int main()
+{
     char c = 'H';
     int a = 10;
     int b = 15;
