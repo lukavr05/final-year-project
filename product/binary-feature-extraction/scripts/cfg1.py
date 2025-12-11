@@ -31,6 +31,5 @@ def getCFGFeatures(path):
     
     return np.array([num_nodes, num_edges, density, cyclomatic, num_functions, num_branches, branch_ratio], dtype=float)
 
-cfg = getCFG("../examples/example1")
 
-print(getCFGFeatures(cfg))
+print(getCFGFeatures("../examples/example1"))

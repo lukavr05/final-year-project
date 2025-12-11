@@ -24,6 +24,8 @@ def getInstructionCounts(code: bytes):
     for instr, count in instruction_counts.items():
         print(f"{instr}: {count}")
 
+    return instruction_counts
+
 def getInstructionFrequencies(counts):
 
     relevant_instructions = ["jmp", "call", "ret", "cmp", "mov", "push", "pop", "add", "sub"]
