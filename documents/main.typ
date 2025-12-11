@@ -130,7 +130,7 @@ And for the machine learning aspect, we require:
 
 #list(
   [A tool to extract and format a dataset from publicly available datasets. The tool should use the binary feature extraction tool to get features and include the author as the label],
-  [A machine learning model that, given a dataset and a list of features, can accurately predict authorship using regression models],
+  [A machine learning model that, given a dataset and a list of features, can accurately predict authorship using classification models],
   [A report describing the theory that underpins the machine learning methods implemented, evaluating different models and comparing their performance],
 )
 
@@ -306,7 +306,7 @@ Among all these features, it should be taken into consideration that what may ap
 
 == Summary and Conclusion
 
-Over the course of this chapter, we have examined the theoretical and practical foundations of code authorship attribution, outlining its key objectives, measurable stylistic metrics and evaluating their applicability within a machine learning context. While lexical and syntactic features offer rich descriptive potential in source-code-level analysis, their usefulness significantly diminishes in compiled binaries due to the loss of high-level stylistic elements (variable names, whitespace/commenting style) during compilation and obfuscation.
+Over the course of this chapter, we have examined the theoretical and practical foundations of code authorship attribution, outlining its key objectives, measurable stylistic metrics and evaluating their applicability within a machine learning context. While lexical and syntactic features offer rich descriptive features in source-code-level analysis, their usefulness significantly diminishes in compiled binaries due to the loss of high-level stylistic elements (variable names, whitespace/commenting style) during compilation and obfuscation.
 
 Consequently, this project focuses on features that are retained during the compilation process and remain quantifiable in binary form. Metrics such as control-flow complexity and library call usage provide the strongest candidates for representing authorial style in compiled executables. These features, though abstracted from the original source, can still capture meaningful patterns of authorial behaviour suitable for machine learning classification and clustering tasks.
 
@@ -324,11 +324,11 @@ Furthermore, we will establish the concept of feature extraction: the types of a
 
 == Static and Dynamic Analysis
 
-When considering analysis of binary files, there are two main ways methods: static analysis and dynamic analysis. Static analysis, on the one hand, examines the binary _without_ executing it. This limits the features we are able to extract, but nonetheless we can still access features such as control flow. Dynamic analysis, however, focuses on the changes made during a binary file's runtime. This allows us to observe system/API calls and execution traces as they occur. While this broadens the scope for potential features, in the context of this project, it will be unsafe as we aim to determine the authors of potentially malicious code. This means that malicious code would have to be run in order to perform dynamic analysis. Of course, this presents a serious security risk, which will be avoided by excluding dynamic analysis from this project.
+When considering analysis of binary files, there are two main ways methods: static analysis and dynamic analysis. Static analysis, on the one hand, examines the binary _without_ executing it. This limits the features we are able to extract, nonetheless we can still access features such as control flow and instruction counts. Dynamic analysis, however, focuses on the changes made during a binary file's runtime. This allows us to observe system/API calls and execution traces as they occur. While this broadens the scope for potential features, in the context of this project, it will be unsafe as we aim to determine the authors of potentially malicious code. This means that malicious code would have to be run in order to perform dynamic analysis. Of course, this presents a serious security risk, which will be avoided by excluding dynamic analysis from this project.
 
 == Feature Extraction Pipeline
 
-The binary feature extraction pipeline represents the process through which compiled binaries are transformed into numerical features suitable for machine learning. The goal is to move from raw executable code (simply a sequence of bytes) to a structured set of features that captures meaningful stylistic or structural traits of the binary file. most of my pipeline will be using Python, as there are plenty of available and accessible libraries, as well as providing easier formatting when converting to machine learning (which will also be done in Python).
+The binary feature extraction pipeline represents the process through which compiled binaries are transformed into numerical features suitable for machine learning. The goal is to move from raw executable code (simply a sequence of bytes) to a structured set of features that captures meaningful stylistic or structural traits of the binary file. Most of the extraction pipeline will be utilising Python, as there are plenty of available and accessible libraries, as well as providing easier formatting when converting to machine learning (which will also be done in Python).
 
 The basic structure of the pipeline is as follows:
 
@@ -338,7 +338,7 @@ The basic structure of the pipeline is as follows:
 #set align(left)
 
 === Binary Input/Preprocessing
-The pipeline begins with compiled executables that we want to extract from(e.g., `.exe` or `.bin` files). These binaries are read in raw byte form using Python’s in-built I/O mechanisms. The main aim of this stage is to validate that the file exists, detect the architecture (e.g., x86, x64, ARM) that it was compiled on/for and convert the file into a set of bytes. All these prepare the file for the next stage: disassembly.
+The pipeline begins with compiled executables that we want to extract from(e.g., `.exe` or `.bin` files). These binaries are read in raw byte form using Python's in-built I/O mechanisms. The main aim of this stage is to validate that the file exists, detect the architecture (e.g., x86, x64, ARM) that it was compiled on/for and convert the file into a set of bytes. All these prepare the file for the next stage: disassembly.
 
 === Disassembly
 At this point, the binary data is still *machine code* - unreadable to humans and difficult to analyse. The disassembly stage converts this machine code into assembly language, which represents each machine instruction symbolically (e.g., `mov`, `jmp`, `call`). Extracting these is very useful in determining control flow and instruction frequency in the faeture extraction phase.
@@ -431,7 +431,7 @@ There are myriad approaches to extract information from just the `main` function
 
 === Analysing Binary Structure
 
-To tackle this newly arisen issue of compiler artefacts produced in the compilation process, we will need to analyse how binary files are structured so we can extract only the user-generated sections. ELF files, which are one of the simplest formats of binary structure, are split into several sections @tiscommittee1995:
+To tackle this newly arisen issue of compiler artifacts produced in the compilation process, we will need to analyse how binary files are structured so we can extract only the user-generated sections. ELF files, which are one of the simplest formats of binary structure, are split into several sections @tiscommittee1995:
 
 #set align(center)
 #table(
@@ -620,7 +620,7 @@ And with $n = 3$:
 
 === Normalising Instruction n-grams
 
-Now we have extracted the raw n-grams, the challenge of normalising this list of tuples in a way that can be processed by a machine learning algorithm. A well-known and proven method is TF-IDF (Term Frequency - Inverse Document Frequency). It is essentially a way to weight the importance of a word (or token) in a document, _relative_ to a collection of documents. This means that tokens which appear a lot in one document won't affect the overall score as much @bafna2016. In the context of the project, each "document" is a binary file and each "token" is an instruction n-gram. However, this normalisation is done at the dataset level, as the IDF analysis requires the entire corpus. This means, for now, we can just do the TF part, where we can store all the unique n-grams in a file, with their count. Then, when we have an entire dataset, we can implement a pipeline (more in *Chapter 4*) that can handle the IDF.
+Now we have extracted the raw n-grams, the challenge becomes normalising this list of tuples in a way that can be processed by a machine learning algorithm. A well-known and proven method is TF-IDF (Term Frequency - Inverse Document Frequency). It is essentially a way to weight the importance of a word (or token) in a document, _relative_ to a collection of documents. This means that tokens which appear a lot in one document won't affect the overall score as much @bafna2016. In the context of the project, each "document" is a binary file and each "token" is an instruction n-gram. However, this normalisation is done at the dataset level, as the IDF analysis requires the entire corpus. This means, for now, we can just do the TF part, where we can store all the unique n-grams in a file, with their count. Then, when we have an entire dataset, we can implement a pipeline (more in *Chapter 4*) that can handle the IDF.
 
 
 == Control Flow
@@ -629,7 +629,7 @@ Analysing the control flow of a binary file can be a very good indicator of auth
 
 === Extracting A Control Flow Graph
 
-While it would be possible to create a CFG from scratch in Python, I believe it will be more time and memory efficient to use the `angr` library, which can create CFGs for any binary file easily. Using elementary objects, we can extract the CFG itself - and more importantly - the information contained within it. As shown below, the extraction itself is very simple:
+While it would be possible to create a CFG extraction tool from scratch in Python, I believe it will be more time and memory efficient to use the `angr` library, which can create CFGs for any binary file easily. Using elementary objects, we can extract the CFG itself - and more importantly - the information contained within it. As shown below, the extraction itself is very simple:
 
 ```py
 def getControlFlowGraph(path):
@@ -640,7 +640,7 @@ def getControlFlowGraph(path):
     return cfg
 ```
 
-We first instantiate a `Project` object, which in essence stores everything related to the binary we are analysing. The object takes the path to the binary file, as well as some load options as parameters. the `auto_load_libs` property simply specifies that we want the tool to *ignore* shared libraries. As the CFG analysis by default does not distinguish between code from different binary objects @shoshitaishvili2016.
+We first instantiate a `Project` object which, in essence, stores everything related to the binary we are analysing. The object takes the path to the binary file, as well as some load options as parameters. the `auto_load_libs` property simply specifies that we want the tool to *ignore* shared libraries, as the CFG analysis by default does not distinguish between code from different binary objects @shoshitaishvili2016.
 
 Using the following code, we can extract some meaningful features from the extracted CFG:
 
@@ -708,7 +708,7 @@ else:
     branch_ratio = 0
 ```
 
-We now have sufficient features from the control flow graph 
+We now have a solid set of features from the control flow graph that can be used with machine learning.
 
 = Machine Learning
 
@@ -1047,7 +1047,7 @@ def parseCSV():
             processed += 1
 ```
 
-With that, we can move on to the actual compilation, where we use the functions above to extract and compile the source code. We split the CSV into chunks, where we process each chunk at a time in parallel, and store the results in `.log` files. The `tqdm` module simply provides a low-overhead API that outputs a progress bar for the comilation, as this is a large task, and being able to see how many files have been processed and the files processed per second is very useful.
+With that, we can move on to the actual compilation, where we use the functions above to extract and compile the source code. We split the CSV into chunks, where we process each chunk at a time in parallel, and store the results in `.log` files; if the files do not already exist, they will be created. The `tqdm` module simply provides a low-overhead API that outputs a progress bar for the comilation, as this is a large task, and being able to see how many files have been processed and the files processed per second is very useful.
 
 ```py    
     print(f"Loaded {len(tasks)} tasks, starting parallel compilation...")
@@ -1133,7 +1133,7 @@ def buildDataset():
     print(f"\nDataset written to {OUTPUT_FILE}") 
 ```
 
-We now have a very useful and efficient command-line tool that generates a datset with the features we have gathered so far and the labels, ready for a machine learning model.
+We now have a very useful and efficient command-line tool that generates a datset with the features we have gathered so far and the labels, ready to be parsed into a machine learning model.
 
 == Creating a Model
 

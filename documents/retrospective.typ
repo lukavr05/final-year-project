@@ -124,9 +124,63 @@ By December 5#super[th], I had completed most intended objectives, by having som
 
 *Week 15*
 #line()
-I had to abandon the machine learning development, as I had to complete my interim report and other additional submissions, so was not able to get a high-accuracy model.
+I had to abandon the machine learning development, as I had to complete my interim report and other additional submissions, so was not able to get a high-accuracy model fully implemented, although all of the different sections of the program were working to some degree at least.
 
 = Second Term Plan
+
+== Outline
+For the second term, the features I want to implement are as follows:
+
+#list(
+  [Finish implementing TF-IDF for instruction n-grams and opcode sequences.],
+  [Expand static binary features, including: additional control-flow features, instruction diversity metrics, and API-call metrics],
+  [Experiment more with machine learning, ensuring a prediction accuracy at least above 0.6 or 60%],
+  [Include malicious binaries in dataset, using clustering to distinguish malicious authors from benign ones.],
+  [Modify machine learning algorithm to perform both author prediction and malicious classification]
+)
+
+== Timeline
+
+*Weeks 1-2*
+#line(length: 100%)
+#list(
+  [Evaluate current features extracted by feature extraction tool, make improvements where necessary (refactor code, improve efficiency)],
+  [Research into additional features that can be extracted, such as diversity metrics],
+  indent: 0.2cm
+)
+
+*Weeks 2-4*
+#line(length: 100%)
+#list(
+  [Finish implementing TF-IDF with N-grams for machine learning],
+  [Add dynamic architecture detection to the binary feature extraction tool],
+  [Implement methods to identify all functions in the `.text` section of each binary file and iterate through *all* functions],
+  indent: 0.2cm
+)
+*Weeks 5-6*
+#line(length: 100%)
+#list(
+  [Refactor machine learning to work with `sklearn`'s pipeline, using a more robust cross-validation technique],
+  [Test a wider variety of classification models, using cross-validation and cross-conformal predictors],
+  indent: 0.2cm
+)
+
+*Weeks 7-8*
+#line(length: 100%)
+#list(
+  [Begin work on locating malicious binary datasets],
+  [Modify machine learning to be able to cluster authors into malicious and non-malicious using clustering methods such as K-Means and DBSCAN],
+  [Evaluate the clusters using proven methods],
+  indent: 0.2cm
+)
+
+*Weeks 11-12*
+#line(length: 100%)
+#list(
+  [Perform any final machine learning experiments to improve accuracy and predictions.],
+  [Complete all report documentation, cleaning up formatting and ensuring all aspects of the report are explained well and properly referenced],
+  indent: 0.2cm
+)
 
 = Reflection
 
@@ -135,3 +189,18 @@ Although I ended up with a product I am very happy with overall, I think several
 Moving forward, I intend to plan out the programming aspect more, so I can switch between concepts if one proves to more difficult. This parallel development will ensure progress stays maintainable and consistent throughout. I will also use the issue tracking system in Gitlab to keep track of my completed work, and what tasks I have yet to complete.
 
 = Risk Assessment
+
+#table(
+  columns: (15%, 25%, 10%,10%, 10%, 30%),
+  inset: 10pt,
+  table.header(
+    [*Risk Category*], [*Risk Description*], [*Likelihood (1-5)*],[*Impact (1-5)*], [*Risk- Level (1-25)*], [*Mitigation Strategies*]
+  ),
+  [Technical], [Difficulty implementing TF-IDF efficiently for large n-gram feature sets], [3], [2], [6], [Truncate n-gram sequences to be a certain length, look into other efficiency methods],
+  [],[Dependency on external libraries such as `angr` and `capstone`], [5], [3], [15], [Make sure to validate external libraries and check for updates, but always use a stable version using the `uv` package manager],
+  [], [Hardware resource limitations], [4], [3], [12], [Use my main PC at home to perform expensive computations, such as the dataset generation and compilation, to avoid damaging the hardware on my laptop.],
+  [], [Corruption of extremely large dataset files], [2], [4], [8], [Ensure that backups can be made for datasets and that the original CSV file is not altered and also kept safe.], 
+  [Project Management], [Time constraints with other assignments/revision towards the end of the term], [5], [4], [20], [Attempt to complete the bulk of technical aspects towards the beginning of the term, leaving only documentation/report writing towards the end when other modules will interfere.],
+  [Ethical], [Acquiring and handling malware binaries for the dataset], [5]
+, [4], [20], [Ensure all code that touches the malicious files is constrained using docker/virtual environments]
+)
