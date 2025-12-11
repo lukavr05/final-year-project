@@ -1293,6 +1293,10 @@ As of the time of the submission of the Interim Report (12/12/2025), the followi
   [Performed preliminary experiments on different machine learning models to determine which will work best for the classification problem]
 )
 
+== Project Demonstration
+
+The link to the demonstration video displaying all current working code can be found here: https://www.youtube.com/watch?v=Ey3dimP2jmY
+
 == Project Diary
 
 ```md
