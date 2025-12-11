@@ -13,6 +13,16 @@ def getCFGFeatures(path):
     cfg = getCFG(path)
     g = cfg.model.graph
 
+    print("Graph Type:", cfg.model.graph)
+    print("\nNodes:")
+    for node in cfg.model.graph.nodes():
+        print(f"Node address: {hex(node.addr)}\tNode size: {node.size}")
+
+    print("\nEdges:")
+
+    for src, dest in cfg.model.graph.edges():
+        print(f"{hex(src.addr)} -> {hex(dest.addr)}")
+
     num_nodes = len(g.nodes())
     num_edges = len(g.edges())
 
