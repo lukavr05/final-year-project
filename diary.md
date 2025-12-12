@@ -1,5 +1,41 @@
 # My Project Diary
 
+## Entry 25 - 11/12/2025
+
+Recorded my demonstration video and completed my retrospective report and interim report, completeing spelling and grammar checks.
+
+## Entry 24 - 10/12/2025
+
+Cleaned up the project repository to ensure that all files are up to date and complete.
+
+## Entry 23 - 08/12/2025
+
+Updated individual test scripts to output better for the demonstration video, completed the reflection and timeline section of the reflective report.
+
+## Entry 22 - 04/12/2025
+
+Lowered dataset size for testing on my laptop, and added generated files to the gitignore file. Skipped using the GradientBooster classifier in machine learning tests as it takes far too long to cross-validate.
+
+## Entry 21 - 03/12/2025
+
+Revamped the machine learning tests, using the GridSearchCV class and a pipeline to speed up model training.
+
+## Entry 20 - 27/11/2025
+
+Completed the summary of work section for the report, as well as updating the machine learning section with my new machine learning progress.
+
+Updated some tests for the machine learning models, testing some cross-validation methods to see which classifier is best
+
+## Entry 19 - 25/11/2025
+
+Added binary feature extraction tool to the overall dataset generation pipeline, successfully prototyping dataset generation.
+
+## Entry 18 - 24/11/2025
+
+Added a progress bar to the dataset generation tool. This decision came as I wanted to see how fast it runs. However, I noticed it ran very slow so decided to migrate the project from using `pip` to `uv`, a faster package manager. This led to minor improvements, but I beieve the limitation lies in my laptop hardware.
+
+Added sections to my report that are required for the interim report.
+
 ## Entry 17 - 21/11/2025
 
 Finished tool for extracting binaries from the CFG. Pausing development of new tools for now, focusing on formatting all my work for the interim report.

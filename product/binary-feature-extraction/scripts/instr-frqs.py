@@ -1,17 +1,13 @@
 import lief
+from capstone import Cs, CS_ARCH_X86, CS_MODE_64
 import numpy as np
-import angr
-from capstone import *
-
 
 def getTextfromBinary(path):
-
     binary = lief.parse(path)
 
     text_section = binary.get_section(".text")
 
     return bytes(text_section.content)
-
 
 def getInstructionCounts(code: bytes):
  
@@ -25,8 +21,10 @@ def getInstructionCounts(code: bytes):
         else:
             instruction_counts[mnemonic] = 1
 
-    return instruction_counts
+    for instr, count in instruction_counts.items():
+        print(f"{instr}: {count}")
 
+    return instruction_counts
 
 def getInstructionFrequencies(counts):
 
@@ -47,44 +45,5 @@ def getInstructionFrequencies(counts):
 
     print(freqs)
 
-
-def getNGrams(code: bytes, n):
-    md = Cs(CS_ARCH_X86, CS_MODE_64)
-    instructions = []
-
-    for i in md.disasm(code, 0x1000):
-        instructions.append(i.mnemonic)
-
-    ngrams = []
-
-    for i in range(len(instructions) - n + 1):
-        ngram = tuple(instructions[i:i+n])
-        ngrams.append(ngram)
-    
-    return ngrams
-
-
-def getNGramCounts(ngrams):
-    ngram_counts = {}
-
-    for n in ngrams:
-        if n in ngram_counts:
-            ngram_counts[n] += 1
-        else:
-            ngram_counts[n] = 1
-
-    return ngram_counts
-
-
-def getCFG(path):
-    binary = angr.Project(path, load_options={"auto_load_libs": False})
-
-    cfg = binary.analyses.CFGFast()
-    
-    return cfg
-
-def getCFGFeatures(cfg):
-    g = cfg.model.graph
-
-    num_nodes = len(g.nodes())
-    num_edges = len(g.edges())
+text = getTextfromBinary("../examples/example1")
+getInstructionFrequencies(getInstructionCounts(text))

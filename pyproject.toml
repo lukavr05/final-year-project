@@ -8,5 +8,7 @@ dependencies = [
     "pathlib",
     "tqdm",
     "capstone",
-    "angr",
+    "pandas",
+    "angr>=9.2.184",
+    "scikit-learn",
 ]
