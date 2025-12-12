@@ -432,7 +432,7 @@ There are myriad approaches to extract information from just the `main` function
 === Analysing Binary Structure
 
 To tackle this newly arisen issue of compiler artifacts produced in the compilation process, we will need to analyse how binary files are structured so we can extract only the user-generated sections. ELF files, which are one of the simplest formats of binary structure, are split into several sections @tiscommittee1995:
-
+#pagebreak()
 #set align(center)
 #table(
   [*ELF Header*],
@@ -572,6 +572,7 @@ From the graph, we can deduce that the `mov` instruction is the most common thro
 
 To summarise our findings so far with instruction counts: analysing instruction frequency provides a practical and effective method for extracting stylistic features from compiled binaries. Although raw instruction counts vary significantly between programs due to differences in size, optimisation level, and compiler behaviour, focusing on the most common and semantically meaningful/relevant instructions enables the extraction of features that are more reliable. By isolating the `.text` section using Lief and disassembling it with Capstone, the tool captures a consistent representation of program behaviour while avoiding unrelated data or metadata. This reduces compiler-generated noise and emphasises patterns that are more indicative of programmer style rather than compilation artefacts.
 
+#pagebreak()
 == N-grams
 
 N-grams are a very valuable tool for authorship attribution and have been used widely in research @kalgutkar2019 as they are robust and survive compilation @burrows2007. Put simply, instruction n-grams are a sequence of $n$ consecutive instructions, represented by their mnemonics (e.g., `mov`, `jmp`). There are several types of n-grams:
@@ -617,12 +618,11 @@ And with $n = 3$:
 [('xor', 'mov', 'pop'), ('mov', 'pop', 'mov'), ('pop', 'mov', 'and'), ('mov', 'and', 'push'), ('and', 'push', 'push'), ('push', 'push', 'xor'), ('push', 'xor', 'xor')
 [...]
 ```
-
 === Normalising Instruction n-grams
 
 Now we have extracted the raw n-grams, the challenge becomes normalising this list of tuples in a way that can be processed by a machine learning algorithm. A well-known and proven method is TF-IDF (Term Frequency - Inverse Document Frequency). It is essentially a way to weight the importance of a word (or token) in a document, _relative_ to a collection of documents. This means that tokens which appear a lot in one document won't affect the overall score as much @bafna2016. In the context of the project, each "document" is a binary file and each "token" is an instruction n-gram. However, this normalisation is done at the dataset level, as the IDF analysis requires the entire corpus. This means, for now, we can just do the TF part, where we can store all the unique n-grams in a file, with their count. Then, when we have an entire dataset, we can implement a pipeline (more in *Chapter 4*) that can handle the IDF.
 
-
+#pagebreak()
 == Control Flow
 
 Analysing the control flow of a binary file can be a very good indicator of authorship @hayes2010. The use of *Control Flow Graphs* (CFGs) are imperative to ascertain how a program is structured.
@@ -666,8 +666,7 @@ Node address: 0x401000  Node size: 16
 Node address: 0x401070  Node size: 19
 Node address: 0x4010a0  Node size: 36
 Node address: 0x4010e0  Node size: 13
-Node address: 0x401120  Node size: 9
-Node address: 0x401129  Node size: 36
+
 [...]
 
 Edges:
@@ -675,8 +674,6 @@ Edges:
 0x401000 -> 0x401012
 0x401000 -> 0x401010
 0x401070 -> 0x401098
-0x401070 -> 0x401083
-0x4010a0 -> 0x4010d8
 [...]
 ```
 
@@ -767,7 +764,7 @@ file,flines,full_path,round,solution,task,username,year
 #set align(left)
 
 Most of these features are slightly ambiguous in terms of their naming, but the usable features are clear enough. These are:
-
+#pagebreak()
 #set align(center)
 #table(
   columns: 3,
@@ -828,10 +825,6 @@ using namespace std;
 // BEGIN NO SAD
 #define rep(i, a, b) for(int i = a; i < (b); ++i)
 #define trav(a, x) for(auto& a : x)
-#define all(x) x.begin(), x.end()
-#define sz(x) (int)(x).size()
-typedef vector<int> vi;
-// END NO SAD
 [...]
 ```
 
@@ -1165,7 +1158,7 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 ```
-
+#pagebreak()
 === Choosing a Model
 
 Before we can even consider making predictions on the dataset, we must first define and evaluate the model to use for the machine learning aspect. Also, we must consider the type of problem we have. Given that we have a set of features and we wish to predict a label, or class, based off of these features, rather than using the features to numerically describe an unknown label, the problem is that of *classification*.
@@ -1198,8 +1191,8 @@ grid_search = GridSearchCV(
     print(f"Time: {elapsed:.2f}s")
 ```
 
-This script outputs, for each model, the best parameters, the best cross-validation score, the accuracy on the validation set, and the time taken.
-
+This script outputs, for each model, the best parameters, the best cross-validation score, the accuracy on the validation set, and the time taken. The ouput can be found below:
+#pagebreak()
 ```
 Tuning KNN...
 Fitting 5 folds for each of 20 candidates, totalling 100 fits
@@ -1300,6 +1293,18 @@ The link to the demonstration video displaying all current working code can be f
 == Project Diary
 
 ```md
+## Entry 25 - 11/12/2025
+
+Recorded my demonstration video and completed my retrospective report and interim report, completeing spelling and grammar checks.
+
+## Entry 24 - 10/12/2025
+
+Cleaned up the project repository to ensure that all files are up to date and complete.
+
+## Entry 23 - 08/12/2025
+
+Updated individual test scripts to output better for the demonstration video, completed the reflection and timeline section of the reflective report.
+
 ## Entry 22 - 04/12/2025
 
 Lowered dataset size for testing on my laptop, and added generated files to the gitignore file. Skipped using the GradientBooster classifier in machine learning tests as it takes far too long to cross-validate.

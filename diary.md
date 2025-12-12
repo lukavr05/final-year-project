@@ -1,5 +1,17 @@
 # My Project Diary
 
+## Entry 25 - 11/12/2025
+
+Recorded my demonstration video and completed my retrospective report and interim report, completeing spelling and grammar checks.
+
+## Entry 24 - 10/12/2025
+
+Cleaned up the project repository to ensure that all files are up to date and complete.
+
+## Entry 23 - 08/12/2025
+
+Updated individual test scripts to output better for the demonstration video, completed the reflection and timeline section of the reflective report.
+
 ## Entry 22 - 04/12/2025
 
 Lowered dataset size for testing on my laptop, and added generated files to the gitignore file. Skipped using the GradientBooster classifier in machine learning tests as it takes far too long to cross-validate.
