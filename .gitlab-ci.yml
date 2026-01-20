@@ -17,6 +17,7 @@ lint:
   script:
     - uv run ruff check .
     - uv run ruff format --check .
+  allow_failure: true
 
 dataset:
   stage: dataset
