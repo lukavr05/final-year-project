@@ -7,8 +7,8 @@ variables:
   PYTHONUNBUFFERED: "1"
 
 before_script:
-  - python3 -m venv venv
-  - source venv/bin/activate
+  - python3 -m venv .venv
+  - source .venv/bin/activate
   - pip install uv
   - uv sync --active
 
@@ -23,7 +23,6 @@ dataset:
   stage: dataset
   timeout: 30m
   script:
-    - which g++ || echo "g++ not found, dataset generation may fail"
     - cd product/machine-learning/dataset-generation
     - uv run python tool/dataset-generator2.py 50 gcjsample.csv
   allow_failure: true
