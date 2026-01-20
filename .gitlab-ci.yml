@@ -1,0 +1,39 @@
+stages:
+  - lint
+  - dataset
+  - train
+
+variables:
+  PYTHONUNBUFFERED: "1"
+
+before_script:
+  - pip install uv
+  - uv sync
+
+lint:
+  stage: lint
+  script:
+    - uv run ruff check .
+    - uv run ruff format --check .
+
+dataset:
+  stage: dataset
+  timeout: 30m
+  before_script:
+    - which g++ || echo "g++ not found, dataset generation may fail"
+    - pip install uv
+    - uv sync
+  script:
+    - cd product/machine-learning/dataset-generation/tool
+    - uv run python dataset-generator2.py 50
+  artifacts:
+    paths:
+      - product/machine-learning/model/binary-features.txt
+    expire_in: 1 week
+  allow_failure: true
+
+train:
+  stage: train
+  script:
+    - cd product/machine-learning/model
+    - uv run python train.py
