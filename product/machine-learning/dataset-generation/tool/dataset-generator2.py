@@ -31,16 +31,14 @@ def parse_args():
         print("  csv_path: Path to CSV file (default: ../gcj2020.csv)")
         sys.exit(1)
 
-    # Parse number of files
     try:
         num_files = int(sys.argv[1])
     except ValueError:
         print("Error: num_files must be an integer")
         sys.exit(1)
 
-    # Parse CSV path if provided
     if len(sys.argv) > 2:
-        CSV_PATH = sys.argv[2]
+        CSV_PATH = str(sys.argv[2])
 
     return num_files
 

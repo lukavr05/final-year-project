@@ -1,9 +1,8 @@
-import lief
-import numpy as np
 import angr
+import lief
 import networkx as nx
-from capstone import *
-import networkx as nx
+import numpy as np
+from capstone import CS_ARCH_X86, CS_MODE_64, Cs
 
 
 def getTextfromBinary(path):
@@ -16,7 +15,7 @@ def getTextfromBinary(path):
 
 
 def getInstructionCounts(code: bytes):
- 
+
     md = Cs(CS_ARCH_X86, CS_MODE_64)
     instruction_counts = {}
 
@@ -34,7 +33,15 @@ def getInstructionFrequencies(code: bytes):
 
     counts = getInstructionCounts(code)
 
-    relevant_instructions = ["jmp", "call", "ret", "cmp", "mov", "push", "pop", "add", "sub"]
+    relevant_instructions = ["jmp",
+                            "call",
+                            "ret",
+                            "cmp",
+                            "mov",
+                            "push",
+                            "pop",
+                            "add",
+                            "sub"]
     freqs = np.zeros(len(relevant_instructions), dtype=float)
     total_instructions = 0
 
@@ -64,7 +71,7 @@ def getNGrams(code: bytes, n):
     for i in range(len(instructions) - n + 1):
         ngram = tuple(instructions[i:i+n])
         ngrams.append(ngram)
-    
+
     return ngrams
 
 
@@ -84,7 +91,7 @@ def getCFG(path):
     binary = angr.Project(path, load_options={"auto_load_libs": False})
 
     cfg = binary.analyses.CFGFast()
-    
+
     return cfg
 
 def getCFGFeatures(path):
@@ -101,13 +108,20 @@ def getCFGFeatures(path):
     for _, d in g.out_degree():
         if d > 1:
             num_branches += 1
-            
+
     if num_nodes > 0:
         branch_ratio = num_branches / num_nodes
     else:
         branch_ratio = 0
-    
-    return np.array([num_nodes, num_edges, density, cyclomatic, num_functions, num_branches, branch_ratio], dtype=float)
+
+    return np.array([num_nodes,
+                     num_edges,
+                     density,
+                     cyclomatic,
+                     num_functions,
+                     num_branches,
+                     branch_ratio],
+                     dtype=float)
 
 def extractBinaryFeatures(path):
     text = getTextfromBinary(path)
