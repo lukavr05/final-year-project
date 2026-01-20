@@ -22,11 +22,8 @@ lint:
 dataset:
   stage: dataset
   timeout: 30m
-  before_script:
-    - which g++ || echo "g++ not found, dataset generation may fail"
-    - pip install uv
-    - uv sync
   script:
+    - which g++ || echo "g++ not found, dataset generation may fail"
     - cd product/machine-learning/dataset-generation/tool
     - uv run python dataset-generator2.py 50
   artifacts:
