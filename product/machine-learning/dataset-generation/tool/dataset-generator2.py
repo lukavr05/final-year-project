@@ -23,13 +23,26 @@ MIN_BINARIES = 5
 
 
 def parse_args():
-    if len(sys.argv) > 1:
-        try:
-            return int(sys.argv[1])
-        except ValueError:
-            print("Usage: python dataset-generator2.py [num_files]")
-            sys.exit(1)
-    return NUM_FILES
+    global CSV_PATH
+
+    if len(sys.argv) < 2:
+        print("Usage: python dataset-generator2.py [num_files] [csv_path]")
+        print("  num_files: Number of files to process (default: 500)")
+        print("  csv_path: Path to CSV file (default: ../gcj2020.csv)")
+        sys.exit(1)
+
+    # Parse number of files
+    try:
+        num_files = int(sys.argv[1])
+    except ValueError:
+        print("Error: num_files must be an integer")
+        sys.exit(1)
+
+    # Parse CSV path if provided
+    if len(sys.argv) > 2:
+        CSV_PATH = sys.argv[2]
+
+    return num_files
 
 
 HEADER = [
@@ -251,4 +264,5 @@ def build_dataset():
 
 if __name__ == "__main__":
     NUM_FILES = parse_args()
+    print(f"Processing {NUM_FILES} files from {CSV_PATH}")
     build_dataset()

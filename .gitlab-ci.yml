@@ -24,12 +24,8 @@ dataset:
   timeout: 30m
   script:
     - which g++ || echo "g++ not found, dataset generation may fail"
-    - cd product/machine-learning/dataset-generation/tool
-    - uv run python dataset-generator2.py 50
-  artifacts:
-    paths:
-      - product/machine-learning/model/binary-features.txt
-    expire_in: 1 week
+    - cd product/machine-learning/dataset-generation
+    - uv run python tool/dataset-generator2.py 50 gcjsample.csv
   allow_failure: true
 
 train:
