@@ -455,4 +455,498 @@ int main() {
   cin.tie(NULL); cout.tie(NULL);
   solve();
 }
-"
+",0000000000210dfc.CPP,000000000019fd27,0000000000210dfc,0000000000209a9f,xiaowuc1,2020
+4,0000000000210be4,"#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <chrono>
+#include <cstring>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <queue>
+#include <random>
+#include <set>
+#include <stack>
+#include <vector>
+
+using namespace std;
+
+// BEGIN NO SAD
+#define rep(i, a, b) for(int i = a; i < (b); ++i)
+#define trav(a, x) for(auto& a : x)
+#define all(x) x.begin(), x.end()
+#define sz(x) (int)(x).size()
+typedef vector<int> vi;
+// END NO SAD
+
+typedef long long ll;
+typedef pair<int, int> pii;
+typedef vector<vector<ll>> matrix;
+typedef pair<ll, ll> pll;
+
+// remember you may need to reset state
+int g[105][105];
+void rsolve() {
+  int n;
+  cin >> n;
+  for(int i = 0; i < n; i++) {
+    for(int j = 0; j < n; j++) {
+      cin >> g[i][j];
+    }
+  }
+  int ret = 0;
+  int rr = 0;
+  int cc = 0;
+  for(int i = 0; i < n; i++) {
+    ret += g[i][i];
+    bool rrr = false;
+    bool ccc = false;
+    for(int j = 0; j < n; j++) {
+      for(int k = 0; k < j; k++) {
+        rrr |= g[i][j] == g[i][k];
+        ccc |= g[j][i] == g[k][i];
+      }
+    }
+    rr += rrr;
+    cc += ccc;
+  }
+  cout << ret << "" "" << rr << "" "" << cc << ""\n"";
+}
+
+void solve() {
+  int t;
+  cin >> t;
+  for(int casenum = 1; casenum <= t; casenum++) {
+    cout << ""Case #"" << casenum << "": "";
+    rsolve();
+  }
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL); cout.tie(NULL);
+  solve();
+}
+",0000000000210be4.CPP,000000000019fd27,0000000000210be4,000000000020993c,xiaowuc1,2020
+5,0000000000215114,"#include <bits/stdc++.h>
+using namespace std;
+
+#define Fi first
+#define Se second
+typedef long long ll;
+typedef pair<int,int> pii;
+typedef pair<ll,ll> pll;
+#define all(x) (x).begin(), (x).end()
+#define pb push_back
+#define szz(x) (int)(x).size()
+#define rep(i, n) for(int i=0;i<(n);i++)
+typedef tuple<int, int, int> t3;
+
+int B;
+
+int Query(int x) {
+	printf(""%d\n"", x);
+	fflush(stdout);
+	int a; scanf(""%d"", &a);
+	return a;
+}
+
+void solve() {
+	int ans[110] = {};
+	memset(ans, -1, sizeof ans);
+	auto Rev = [&]() { reverse(ans+1, ans+1+B); };
+	auto Flip = [&]() { for(int i=1;i<=B;i++) if(ans[i] != -1) ans[i] = 1 - ans[i]; };
+	for(int i=1;i<=5;i++) {
+		ans[i] = Query(i);
+		ans[B+1-i] = Query(B+1-i);
+	}
+	int s = 5;
+	while(s * 2 < B) {
+		int cq = 0;
+		int f1 = -1, f2 = -1;
+		for(int i=1;i<=s;i++) {
+			if(ans[i] != ans[B+1-i]) f1 = i;
+			else f2 = i;
+		}
+		if(f2 != -1) {
+			int v1 = Query(f2); ++cq;
+			if(v1 != ans[f2]) Flip();
+		}
+		if(f1 != -1) {
+			int v1 = Query(f1); ++cq;
+			if(v1 != ans[f1]) Rev();
+		}
+		int t = min((10 - cq) / 2, B - s / 2);
+		for(int j=1;j<=t;j++) {
+			ans[s + j] = Query(s + j);
+			ans[B+1-s - j] = Query(B+1-s - j);
+			cq += 2;
+		}
+		while(cq < 10) Query(1), cq++;
+		s += t;
+	}
+	for(int i=1;i<=B;i++) printf(""%d"", ans[i]); puts("""");
+
+	fflush(stdout);
+	char ch[4];
+	scanf(""%s"", ch);
+	if(ch[0] == 'N') exit(0);
+}
+
+int main() {
+	int T; scanf(""%d%d"", &T, &B);
+	for(int t=1;t<=T;t++) {
+		solve();
+	}
+	return 0;
+}
+",0000000000215114.CPP,000000000019fd27,0000000000215114,0000000000209a9e,cki86201,2020
+6,0000000000214554,"#include <bits/stdc++.h>
+using namespace std;
+
+#define Fi first
+#define Se second
+typedef long long ll;
+typedef pair<int,int> pii;
+typedef pair<ll,ll> pll;
+#define all(x) (x).begin(), (x).end()
+#define pb push_back
+#define szz(x) (int)(x).size()
+#define rep(i, n) for(int i=0;i<(n);i++)
+typedef tuple<int, int, int> t3;
+
+int B;
+
+int Query(int x) {
+	printf(""%d\n"", x);
+	fflush(stdout);
+	int a; scanf(""%d"", &a);
+	return a;
+}
+
+void solve() {
+	int ans[110] = {};
+	memset(ans, -1, sizeof ans);
+	auto Rev = [&]() { reverse(ans+1, ans+1+B); };
+	auto Flip = [&]() { for(int i=1;i<=B;i++) if(ans[i] != -1) ans[i] = 1 - ans[i]; };
+	for(int i=1;i<=5;i++) {
+		ans[i] = Query(i);
+		ans[B+1-i] = Query(B+1-i);
+	}
+	int s = 5;
+	while(s * 2 < B) {
+		int cq = 0;
+		int f1 = -1, f2 = -1;
+		for(int i=1;i<=s;i++) {
+			if(ans[i] != ans[B+1-i]) f1 = i;
+			else f2 = i;
+		}
+		if(f2 != -1) {
+			int v1 = Query(f2); ++cq;
+			if(v1 != ans[f2]) Flip();
+		}
+		if(f1 != -1) {
+			int v1 = Query(f1); ++cq;
+			if(v1 != ans[f1]) Rev();
+		}
+		int t = min((10 - cq) / 2, B / 2 - s);
+		for(int j=1;j<=t;j++) {
+			ans[s + j] = Query(s + j);
+			ans[B+1-s - j] = Query(B+1-s - j);
+			cq += 2;
+		}
+		while(cq < 10) Query(1), cq++;
+	}
+	for(int i=1;i<=B;i++) printf(""%d"", ans[i]); puts("""");
+
+	fflush(stdout);
+	char ch[4];
+	scanf(""%s"", ch);
+	if(ch[0] == 'N') exit(0);
+}
+
+int main() {
+	int T; scanf(""%d%d"", &T, &B);
+	for(int t=1;t<=T;t++) {
+		printf(""Case #%d: "", t);
+		solve();
+	}
+	return 0;
+}
+",0000000000214554.CPP,000000000019fd27,0000000000214554,0000000000209a9e,cki86201,2020
+7,0000000000213ed5,"#include <bits/stdc++.h>
+using namespace std;
+
+#define Fi first
+#define Se second
+typedef long long ll;
+typedef pair<int,int> pii;
+typedef pair<ll,ll> pll;
+#define all(x) (x).begin(), (x).end()
+#define pb push_back
+#define szz(x) (int)(x).size()
+#define rep(i, n) for(int i=0;i<(n);i++)
+typedef tuple<int, int, int> t3;
+
+int B;
+
+int Query(int x) {
+	printf(""%d\n"", x);
+	fflush(stdout);
+	int a; scanf(""%d"", &a);
+	return a;
+}
+
+void solve() {
+	int ans[110] = {};
+	memset(ans, -1, sizeof ans);
+	auto Rev = [&]() { reverse(ans+1, ans+1+B); };
+	auto Flip = [&]() { for(int i=1;i<=B;i++) if(ans[i] != -1) ans[i] = 1 - ans[i]; };
+	for(int i=1;i<=5;i++) {
+		ans[i] = Query(i);
+		ans[B+1-i] = Query(B+1-i);
+	}
+	int s = 5;
+	while(s * 2 < B) {
+		int cq = 0;
+		int f1 = -1, f2 = -1;
+		for(int i=1;i<=s;i++) {
+			if(ans[i] != ans[B+1-i]) f1 = i;
+			else f2 = i;
+		}
+		if(f2 != -1) {
+			int v1 = Query(f2); ++cq;
+			if(v1 != ans[f2]) Flip();
+		}
+		if(f1 != -1) {
+			int v1 = Query(f1); ++cq;
+			if(v1 != ans[f1]) Rev();
+		}
+		int t = min((10 - cq) / 2, B - s / 2);
+		for(int j=1;j<=t;j++) {
+			ans[s + j] = Query(s + j);
+			ans[B+1-s - j] = Query(B+1-s - j);
+			cq += 2;
+		}
+		while(cq < 10) Query(1), cq++;
+	}
+	for(int i=1;i<=B;i++) printf(""%d"", ans[i]); puts("""");
+
+	fflush(stdout);
+	char ch[4];
+	scanf(""%s"", ch);
+	if(ch[0] == 'N') exit(0);
+}
+
+int main() {
+	int T; scanf(""%d%d"", &T, &B);
+	for(int t=1;t<=T;t++) {
+		printf(""Case #%d: "", t);
+		solve();
+	}
+	return 0;
+}
+",0000000000213ed5.CPP,000000000019fd27,0000000000213ed5,0000000000209a9e,cki86201,2020
+8,0000000000212170,"#include <bits/stdc++.h>
+using namespace std;
+
+#define Fi first
+#define Se second
+typedef long long ll;
+typedef pair<int,int> pii;
+typedef pair<ll,ll> pll;
+#define all(x) (x).begin(), (x).end()
+#define pb push_back
+#define szz(x) (int)(x).size()
+#define rep(i, n) for(int i=0;i<(n);i++)
+typedef tuple<int, int, int> t3;
+
+namespace Matching{
+	//matching [1...n] <-> [1...m]
+	const int MX = 120, MY = 120;
+	vector <int> E[MX];
+	int xy[MX], yx[MY];
+	int n, m;
+
+	void addE(int x, int y) { E[x].pb(y); }
+	void setnm(int sn, int sm) { n = sn; m = sm; rep(i, MX) E[i].clear(); }
+
+	int tdis[MX], que[MX], *dis = tdis + 1;
+	int bfs() {
+		int *fr = que, *re = que;
+		for(int i=1;i<=n;i++) {
+			if(xy[i] == -1) *fr++ = i, dis[i] = 0;
+			else dis[i] = -1;
+		}
+		dis[-1] = -1;
+		while(fr != re) {
+			int t = *re++;
+			if(t == -1) return 1;
+			for(int e : E[t]) {
+				if(dis[yx[e]] == -1) dis[yx[e]] = dis[t] + 1, *fr++ = yx[e];
+			}
+		}
+		return 0;
+	}
+
+	int dfs(int x) {
+		for(int e : E[x]) {
+			if(yx[e] == -1 || (dis[yx[e]] == dis[x] + 1 && dfs(yx[e]))) {
+				xy[x] = e;
+				yx[e] = x;
+				return 1;
+			}
+		}
+		dis[x] = -1;
+		return 0;
+	}
+
+	int Do() {
+		memset(xy, -1, sizeof xy);
+		memset(yx, -1, sizeof yx);
+
+		int ans = 0;
+		while(bfs()) {
+			for(int i=1;i<=n;i++) if(xy[i] == -1 && dfs(i)) ++ans;
+		}
+		return ans;
+	}
+}
+
+int N, K;
+
+void solve() {
+	scanf(""%d%d"", &N, &K);
+	if(K == N+1 || K == N*N-1) puts(""IMPOSSIBLE"");
+	else if(N == 3 && (K == 5 || K == 7)) puts(""IMPOSSIBLE"");
+	else {
+		int V[55] = {}, ans[55][55] = {};
+		for(int i=1;i<=N;i++) V[i] = 1;
+		int tk = K - N;
+		for(int i=N;i;i--) {
+			int v = min(tk, N-1);
+			V[i] += v;
+			tk -= v;
+		}
+		if(V[N] > 1 && V[N-1] == 1) {
+			V[N-1]++; V[N]--;
+		}
+		else if(V[1] < N && V[2] == N) {
+			V[1]++; V[2]--;
+		}
+		for(int i=1;i<=N;i++) ans[i][i] = V[i];
+		int cnt[110] = {}, ord[110] = {};
+		for(int i=1;i<=N;i++) cnt[V[i]]++, ord[i] = i;
+		sort(ord+1, ord+1+N, [&](int x, int y) { return cnt[x] > cnt[y]; });
+		for(int a=1;a<=N;a++) {
+			int i = ord[a];
+			Matching::setnm(N, N);
+			for(int j=1;j<=N;j++) for(int k=1;k<=N;k++) if(!ans[j][k] && V[j] != i && V[k] != i) Matching::addE(j, k);
+			Matching::Do();
+			for(int j=1;j<=N;j++) if(Matching::xy[j] != -1) {
+				int k = Matching::xy[j];
+				ans[j][k] = i;
+			}
+		}
+		puts(""POSSIBLE"");
+		for(int i=1;i<=N;i++, puts("""")) for(int j=1;j<=N;j++) printf(""%d "", ans[i][j]);
+	}
+}
+
+int main() {
+	int T; scanf(""%d"", &T);
+	for(int t=1;t<=T;t++) {
+		printf(""Case #%d: "", t);
+		solve();
+	}
+	return 0;
+}
+",0000000000212170.CPP,000000000019fd27,0000000000212170,0000000000209aa0,cki86201,2020
+9,0000000000210efb,"#include <bits/stdc++.h>
+using namespace std;
+
+#define Fi first
+#define Se second
+typedef long long ll;
+typedef pair<int,int> pii;
+typedef pair<ll,ll> pll;
+#define all(x) (x).begin(), (x).end()
+#define pb push_back
+#define szz(x) (int)(x).size()
+#define rep(i, n) for(int i=0;i<(n);i++)
+typedef tuple<int, int, int> t3;
+
+pii A[1010];
+int E[1010][1010], color[1010], n;
+
+void dfs(int x, int c) {
+	color[x] = c;
+	for(int i=1;i<=n;i++) if(E[x][i] && color[i] == 0) dfs(i, 3 - c);
+}
+
+void solve() {
+	scanf(""%d"", &n);
+	for(int i=1;i<=n;i++) scanf(""%d%d"", &A[i].Fi, &A[i].Se);
+	memset(E, 0, sizeof E);
+	for(int i=1;i<=n;i++) for(int j=1;j<i;j++) {
+		int lv = max(A[i].Fi, A[j].Fi);
+		int rv = min(A[i].Se, A[j].Se);
+		if(lv < rv) E[i][j] = E[j][i] = 1;
+	}
+	memset(color, 0, sizeof color);
+	for(int i=1;i<=n;i++) if(color[i] == 0) dfs(i, 1);
+	int ok = 1;
+	for(int i=1;i<=n;i++) for(int j=1;j<=n;j++) if(E[i][j] && color[i] == color[j]) ok = 0;
+	if(!ok) puts(""IMPOSSIBLE"");
+	else {
+		for(int i=1;i<=n;i++) printf(""%c"", color[i] == 1 ? 'J' : 'C'); puts("""");
+	}
+}
+
+int main() {
+	int T; scanf(""%d"", &T);
+	for(int t=1;t<=T;t++) {
+		printf(""Case #%d: "", t);
+		solve();
+	}
+	return 0;
+}
+",0000000000210efb.CPP,000000000019fd27,0000000000210efb,000000000020bdf9,cki86201,2020
+10,0000000000210b57,"#include <bits/stdc++.h>
+using namespace std;
+
+#define Fi first
+#define Se second
+typedef long long ll;
+typedef pair<int,int> pii;
+typedef pair<ll,ll> pll;
+#define all(x) (x).begin(), (x).end()
+#define pb push_back
+#define szz(x) (int)(x).size()
+#define rep(i, n) for(int i=0;i<(n);i++)
+typedef tuple<int, int, int> t3;
+
+void solve() {
+	char In[110];
+	scanf(""%s"", In);
+	int t = 0;
+	for(int i=0;In[i];i++) {
+		int c = In[i] - '0';
+		while(t < c) printf(""(""), ++t;
+		while(t > c) printf("")""), --t;
+		printf(""%c"", In[i]);
+	}
+	while(t > 0) printf("")""), --t;
+	puts("""");
+}
+
+int main() {
+	int T; scanf(""%d"", &T);
+	for(int t=1;t<=T;t++) {
+		printf(""Case #%d: "", t);
+		solve();
+	}
+	return 0;
+}
+",0000000000210b57.CPP,000000000019fd27,0000000000210b57,0000000000209a9f,cki86201,2020
