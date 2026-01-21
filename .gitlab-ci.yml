@@ -24,7 +24,7 @@ dataset:
   timeout: 30m
   script:
     - cd product/machine-learning/dataset-generation/tool
-    - uv run python dataset-generator2.py 50 gcjsample.csv
+    - uv run python dataset-generator2.py 100 gcjsample.csv
   allow_failure: true
   artifacts:
     paths:

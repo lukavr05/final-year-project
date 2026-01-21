@@ -19,7 +19,7 @@ CHUNK_SIZE = 100
 COMPILER = "g++"
 COMP_FLAGS = ["-O2"]
 NUM_WORKERS = 8
-MIN_BINARIES = 5
+MIN_BINARIES = 7
 
 
 def parse_args():
