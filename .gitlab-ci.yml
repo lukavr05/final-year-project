@@ -26,6 +26,10 @@ dataset:
     - cd product/machine-learning/dataset-generation/tool
     - uv run python dataset-generator2.py 50 gcjsample.csv
   allow_failure: true
+  artifacts:
+    paths:
+      - product/machine-learning/model/binary-features.txt
+    expire_in: 1 hour
 
 train:
   stage: train
