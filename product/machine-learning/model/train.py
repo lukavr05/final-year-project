@@ -26,7 +26,7 @@ print(f"Dataset shape: X={X.shape}, y={y.shape}")
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2408, stratify=y)
 X_train_pr, X_valid, y_train_pr, y_valid = train_test_split(
-    X_train, y_train, test_size=0.2, random_state=42
+    X_train, y_train, test_size=0.2, random_state=42, stratify=y_train
 )
 
 pipelines_and_grids = {
