@@ -1,0 +1,38 @@
+stages:
+  - lint
+  - dataset
+  - train
+
+variables:
+  PYTHONUNBUFFERED: "1"
+
+before_script:
+  - python3 -m venv .venv
+  - source .venv/bin/activate
+  - pip install uv
+  - uv sync --active
+
+lint:
+  stage: lint
+  script:
+    - uv run ruff check .
+    - uv run ruff format --check .
+  allow_failure: true
+
+dataset:
+  stage: dataset
+  timeout: 30m
+  script:
+    - cd product/machine-learning/dataset-generation/tool
+    - uv run python dataset-generator2.py 100 gcjsample.csv
+  allow_failure: true
+  artifacts:
+    paths:
+      - product/machine-learning/model/binary-features.txt
+    expire_in: 1 hour
+
+train:
+  stage: train
+  script:
+    - cd product/machine-learning/model
+    - uv run python train.py
