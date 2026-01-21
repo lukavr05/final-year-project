@@ -24,7 +24,7 @@ dataset:
   timeout: 30m
   script:
     - cd product/machine-learning/dataset-generation
-    - uv run python tool/dataset-generator2.py 50 gcjsample.csv
+    - uv run python tool/dataset-generator2.py 50 tool/gcjsample.csv
   allow_failure: true
 
 train:
